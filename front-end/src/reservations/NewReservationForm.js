@@ -39,7 +39,9 @@ export default function NewReservation() {
 
   // validate date function - make sure date is NOT reserved on Tuesdays
   function validateDate() {
-    const reserveDate = new Date(formData.reservation_date);
+    const reserveDate = new Date(
+      `${formData.reservation_date}T${formData.reservation_time}:00.000`
+    );
 
     // compare the reservation date to today's date.
     const todaysDate = new Date();
@@ -60,6 +62,42 @@ export default function NewReservation() {
     if (reserveDate < todaysDate) {
       foundErrors.push({
         message: "Whoops sorry! Reservations cannot be made in the past.",
+      });
+    }
+
+    // in english: if it is before 10:30am...
+    // in code: if the hour is not yet 10 or the hour is 10 but below 30 minutes...
+    if (
+      reserveDate.getHours() < 10 ||
+      (reserveDate.getHours() === 10 && reserveDate.getMinutes() < 30)
+    ) {
+      foundErrors.push({
+        message:
+          "Reservations must be made during our business hours! (We open at 10:30am)",
+      });
+    }
+
+    // in english: if it is after 10:30pm...
+    // if the hour is after 22 or the hour is 22 and after 30 minutes...
+    else if (
+      reserveDate.getHours() > 22 ||
+      (reserveDate.getHours() === 22 && reserveDate.getMinutes() >= 30)
+    ) {
+      foundErrors.push({
+        message:
+          "Reservation cannot be made after closing hours! (We close at 10:30pm)",
+      });
+    }
+
+    // in english: if it is after 9:30pm...
+    // if the hour is after 21 or the hour is 21 and after 30 minutes...
+    else if (
+      reserveDate.getHours() > 21 ||
+      (reserveDate.getHours() === 21 && reserveDate.getMinutes() > 30)
+    ) {
+      foundErrors.push({
+        message:
+          "Reservation cannot be made: Reservation must be made at least an hour before closing (10:30pm).",
       });
     }
 
