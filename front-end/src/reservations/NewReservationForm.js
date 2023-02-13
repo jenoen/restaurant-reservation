@@ -1,80 +1,114 @@
 // new component for creating a new reservation
-import React from "react";
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 
 // i named my component NewReservation:
 export default function NewReservation() {
-	return (
-	<form>
-        {/* First Name */}
-		<label htmlFor="first_name">First Name:</label>
-		<input
-			name="first_name"
-			id="first_name"
-			type="text"
-			onChange={} // we will add this in soon!
-			value={} // this as well!
-			required // this will make the field non-nullable
-		/>
+  const history = useHistory();
 
-            {/* Last Name */}
-		<label htmlFor="first_name">Last Name:</label>
-		<input
-			name="last_name"
-			id="last_name"
-			type="text"
-			onChange={} // we will add this in soon!
-			value={} // this as well!
-			required // this will make the field non-nullable
-		/>
+  // holds the new reservation form data
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    mobile_number: "",
+    reservation_date: "",
+    reservation_time: "",
+    people: 0,
+  });
 
-            {/* Mobile Number */}
-		<label htmlFor="mobile_number">Phone Number:</label>
-		<input
-			name="mobile_number"
-			id="mobile_number"
-			type="tel"
-			onChange={} // we will add this in soon!
-			value={} // this as well!
-			required // this will make the field non-nullable
-		/>
+  // setting the form/card data (this records your keystroke but it doesn't save until SUBMIT)
+  // aka everytime a user makes a change to an input, we want to record that as a state.
+  const handleChange = ({ target }) => {
+    setFormData({
+      ...formData,
+      [target.name]: target.value,
+    });
+  };
 
-            {/* Date of reservation */}
-		<label htmlFor="reservation_date">Reservation Date:</label>
-		<input
-			name="reservation_date"
-			id="reservation_date"
-			type="date"
-			onChange={} // we will add this in soon!
-			value={} // this as well!
-			required // this will make the field non-nullable
-		/>
+  //   this is a function that records the submission.
+  function handleSubmit(event) {
+    event.preventDefault(); // prevents from refreshing the entire page.
 
-            {/* Time of reservation */}
-		<label htmlFor="reservation_time">Reservation Time:</label>
-		<input
-			name="reservation_time"
-			id="reservation_time"
-			type="time"
-			onChange={} // we will add this in soon!
-			value={} // this as well!
-			required // this will make the field non-nullable
-		/>
+    // the push function will "pushes" the user to reservation date
+    history.push(`/dashboard?date=${formData.reservation_date}`);
+  }
 
-            {/* Number of ppl in party */}
-		<label htmlFor="people">Total Number in Party:</label>
-		<input
-			name="people"
-			id="people"
-			type="number"
-			onChange={} // we will add this in soon!
-			value={} // this as well!
-			required // this will make the field non-nullable
-		/>
-        
-                   {/* button for submit*/}
-	<button type="submit" onClick={}>Submit</button>
-    {/* button for cancel*/}
-	<button type="button" onClick={}>Cancel</button>
-	</form> )
+  return (
+    <form>
+      {/* First Name */}
+      <label htmlFor="first_name">First Name: &nbsp;</label>
+      <input
+        name="first_name"
+        id="first_name"
+        type="text"
+        onChange={handleChange} // we will add this in soon!
+        value={formData.first_name} // this as well!
+        required // this will make the field non-nullable
+      />
+
+      {/* Last Name */}
+      <label htmlFor="first_name">Last Name: &nbsp;</label>
+      <input
+        name="last_name"
+        id="last_name"
+        type="text"
+        onChange={handleChange} // we will add this in soon!
+        value={formData.last_name} // this as well!
+        required // this will make the field non-nullable
+      />
+
+      {/* Mobile Number */}
+      <label htmlFor="mobile_number">Phone Number:&nbsp;</label>
+      <input
+        name="mobile_number"
+        id="mobile_number"
+        type="tel"
+        onChange={handleChange} // we will add this in soon!
+        value={formData.mobile_number} // this as well!
+        required // this will make the field non-nullable
+      />
+
+      {/* Date of reservation */}
+      <label htmlFor="reservation_date">Reservation Date:&nbsp;</label>
+      <input
+        name="reservation_date"
+        id="reservation_date"
+        type="date"
+        onChange={handleChange} // we will add this in soon!
+        value={formData.reservation_date} // this as well!
+        required // this will make the field non-nullable
+      />
+
+      {/* Time of reservation */}
+      <label htmlFor="reservation_time">Reservation Time:&nbsp;</label>
+      <input
+        name="reservation_time"
+        id="reservation_time"
+        type="time"
+        onChange={handleChange} // we will add this in soon!
+        value={formData.reservation_time} // this as well!
+        required // this will make the field non-nullable
+      />
+
+      {/* Number of ppl in party */}
+      <label htmlFor="people">Party Size:&nbsp;</label>
+      <input
+        name="people"
+        id="people"
+        type="number"
+        onChange={handleChange} // we will add this in soon!
+        value={formData.people} // this as well!
+        required // this will make the field non-nullable
+      />
+
+      {/* button for submit*/}
+      <button type="submit" onClick={handleSubmit}>
+        Submit
+      </button>
+      {/* button for cancel*/}
+      <button type="button" onClick={history.goBack}>
+        Cancel
+      </button>
+    </form>
+  );
 }
-;
