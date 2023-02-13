@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 
-// i named my component NewReservation:
+// name of new component NewReservation:
 export default function NewReservation() {
   const history = useHistory();
 
@@ -15,6 +15,8 @@ export default function NewReservation() {
     reservation_time: "",
     people: 0,
   });
+  // another state to hold errors
+  const [errors, setErrors] = useState([]);
 
   // setting the form/card data (this records your keystroke but it doesn't save until SUBMIT)
   // aka everytime a user makes a change to an input, we want to record that as a state.
@@ -30,7 +32,45 @@ export default function NewReservation() {
     event.preventDefault(); // prevents from refreshing the entire page.
 
     // the push function will "pushes" the user to reservation date
-    history.push(`/dashboard?date=${formData.reservation_date}`);
+    if (validateDate()) {
+      history.push(`/dashboard?date=${formData.reservation_date}`);
+    }
+  }
+
+  // validate date function - make sure date is NOT reserved on Tuesdays
+  function validateDate() {
+    const reserveDate = new Date(formData.reservation_date);
+
+    // compare the reservation date to today's date.
+    const todaysDate = new Date();
+
+    // array to hold multiple errors
+    const foundErrors = [];
+
+    // if the Date class returns Tues/2 >> push error
+    // (0 is sunday, 6 is saturday)
+    if (reserveDate.getDay() === 2) {
+      foundErrors.push({
+        message:
+          "Whoops sorry! Reservations cannot be made on a Tuesday - we are closed :)",
+      });
+    }
+
+    // if reserveDate is BEFORE todays >> push error
+    if (reserveDate < todaysDate) {
+      foundErrors.push({
+        message: "Whoops sorry! Reservations cannot be made in the past.",
+      });
+    }
+
+    setErrors(foundErrors);
+
+    // aka our dates not NOT valid
+    if (foundErrors.length > 0) {
+      return false;
+    }
+    // aka our dates are valid!
+    return true;
   }
 
   return (
