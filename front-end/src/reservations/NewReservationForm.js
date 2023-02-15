@@ -1,6 +1,7 @@
 // new component for creating a new reservation
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import ErrorAlert from "../layout/ErrorAlert.js";
 
 // name of new component NewReservation:
 export default function NewReservation() {
@@ -31,14 +32,38 @@ export default function NewReservation() {
   function handleSubmit(event) {
     event.preventDefault(); // prevents from refreshing the entire page.
 
-    // the push function will "pushes" the user to reservation date
-    if (validateDate()) {
+    const foundErrors = [];
+
+    // the push function will "push" the user to reservation date if validation passes
+    if (validateFields(foundErrors) && validateDate(foundErrors)) {
       history.push(`/dashboard?date=${formData.reservation_date}`);
     }
+
+    setErrors(foundErrors);
+  }
+
+  // validate that all fields are filled in
+  function validateFields(foundErrors) {
+    for (const field in formData) {
+      if (formData[field] === "") {
+        foundErrors.push({
+          message: `${field.split("_").join(" ")} cannot be left blank.`,
+        });
+      }
+    }
+
+    if (formData.people <= 0) {
+      foundErrors.push({ message: "Party must be a size of at least 1." });
+    }
+
+    if (foundErrors.length > 0) {
+      return false;
+    }
+    return true;
   }
 
   // validate date function - make sure date is NOT reserved on Tuesdays
-  function validateDate() {
+  function validateDate(foundErrors) {
     const reserveDate = new Date(
       `${formData.reservation_date}T${formData.reservation_time}:00.000`
     );
@@ -46,8 +71,8 @@ export default function NewReservation() {
     // compare the reservation date to today's date.
     const todaysDate = new Date();
 
-    // array to hold multiple errors
-    const foundErrors = [];
+    // // array to hold multiple errors
+    // const foundErrors = [];
 
     // if the Date class returns Tues/2 >> push error
     // (0 is sunday, 6 is saturday)
@@ -101,8 +126,6 @@ export default function NewReservation() {
       });
     }
 
-    setErrors(foundErrors);
-
     // aka our dates not NOT valid
     if (foundErrors.length > 0) {
       return false;
@@ -111,8 +134,14 @@ export default function NewReservation() {
     return true;
   }
 
+  // function to display the errors we have received - to be inserted with "form component"
+  const displayErrors = () => {
+    return errors.map((error, idx) => <ErrorAlert key={idx} error={error} />);
+  };
+
   return (
     <form>
+      {displayErrors()}
       {/* First Name */}
       <label htmlFor="first_name">First Name: &nbsp;</label>
       <input
