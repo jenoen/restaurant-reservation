@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { listReservations } from "../utils/api";
 
 import { Redirect, Route, Switch } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
@@ -20,6 +21,25 @@ function Routes() {
   const query = useQuery();
   const date = query.get("date");
 
+  const [reservations, setReservations] = useState([]);
+  const [reservationsError, setReservationsError] = useState(null);
+  const [tables, setTables] = useState([]);
+  const [tablesError, setTablesError] = useState(null);
+
+  // useEffect will call the loadDashboard function every time the 'date' variable changes
+  useEffect(loadDashboard, [date]);
+
+  function loadDashboard() {
+    const abortController = new AbortController();
+    setReservationsError(null);
+
+    // API call
+    listReservations({ date }, abortController.signal)
+      .then(setReservations)
+      .catch(setReservationsError);
+    return () => abortController.abort();
+  }
+
   return (
     <Switch>
       <Route exact={true} path="/">
@@ -29,8 +49,13 @@ function Routes() {
         <Redirect to={"/dashboard"} />
       </Route>
       <Route path="/dashboard">
-        {/* used ternary. if date exists, pass in that date. otherwise, just send in today's date. */}
-        <Dashboard date={date ? date : today()} />
+        <Dashboard
+          date={date ? date : today()}
+          reservations={reservations}
+          reservationsError={reservationsError}
+          tables={tables}
+          tablesError={tablesError}
+        />
       </Route>
 
       <Route exact={true} path="/reservations/new">
