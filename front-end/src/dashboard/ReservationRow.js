@@ -5,6 +5,18 @@ export default function ReservationRow({ reservation }) {
   // aka return nothing if no reservation OR if reservation is finished ... we dont want it shown on dashboard
   if (!reservation || reservation.status === "finished") return null;
 
+  function handleCancel() {
+    if (
+      window.confirm(
+        "Do you want to cancel this reservation? This cannot be undone."
+      )
+    ) {
+      // api call will go here eventually
+
+      window.location.reload();
+    }
+  }
+
   return (
     <tr>
       <th scope="row">{reservation.reservation_id}</th>
@@ -17,6 +29,24 @@ export default function ReservationRow({ reservation }) {
       <td>{reservation.people}</td>
       <td data-reservation-id-status={reservation.reservation_id}>
         {reservation.status}
+      </td>
+
+      {/* button to edit */}
+      <td>
+        <a href={`/reservations/${reservation.reservation_id}/edit`}>
+          <button type="button">Edit</button>
+        </a>
+      </td>
+      {/* button to cancel */}
+      <td>
+        {/* the cancel button requires a data-reservation-id-cancel attribute for the tests */}
+        <button
+          type="button"
+          onClick={handleCancel}
+          data-reservation-id-cancel={reservation.reservation_id}
+        >
+          Cancel
+        </button>
       </td>
 
       {/* a "seat" button thats displayed when reservation is booked. */}

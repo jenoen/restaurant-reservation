@@ -1,11 +1,12 @@
 // new component for creating a new reservation
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert.js";
 
 // name of new component NewReservation:
-export default function NewReservation() {
+export default function NewReservation({ edit, reservations }) {
   const history = useHistory();
+  const { reservation_id } = useParams();
 
   // holds the new reservation form data
   const [formData, setFormData] = useState({
@@ -18,6 +19,33 @@ export default function NewReservation() {
   });
   // another state to hold errors
   const [errors, setErrors] = useState([]);
+
+  // if EDIT form is passed in as true
+  if (edit) {
+    // if either of these don't exist, we cannot continue.
+    if (!reservations || !reservation_id) return null;
+
+    // let's try to find the corresponding reservation:
+    const foundReservation = reservations.find(
+      (reservation) => reservation.reservation_id === Number(reservation_id)
+    );
+
+    // if it doesn't exist, or the reservation is booked, we cannot edit.
+    if (!foundReservation || foundReservation.status !== "booked") {
+      return <p>Only booked reservations can be edited.</p>;
+    }
+
+    // if foundReservation, set the form fields with the pre-existing data
+    setFormData({
+      first_name: foundReservation.first_name,
+      last_name: foundReservation.last_name,
+      mobile_number: foundReservation.mobile_number,
+      reservation_date: foundReservation.reservation_date,
+      reservation_time: foundReservation.reservation_time,
+      people: foundReservation.people,
+      reservation_id: foundReservation.reservation_id,
+    });
+  }
 
   // setting the form/card data (this records your keystroke but it doesn't save until SUBMIT)
   // aka everytime a user makes a change to an input, we want to record that as a state.
