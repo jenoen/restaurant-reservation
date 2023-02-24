@@ -2,9 +2,14 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert.js";
+import {
+  createReservation,
+  editReservation,
+  listReservations,
+} from "../utils/api";
 
 // name of new component NewReservation:
-export default function NewReservation({ edit, reservations }) {
+export default function NewReservation({ edit, reservations, loadDashboard }) {
   const history = useHistory();
   const { reservation_id } = useParams();
 
@@ -15,37 +20,52 @@ export default function NewReservation({ edit, reservations }) {
     mobile_number: "",
     reservation_date: "",
     reservation_time: "",
-    people: 0,
+    people: 1,
   });
   // another state to hold errors
   const [errors, setErrors] = useState([]);
+  const [apiError, setApiError] = useState(null); // if error in API call
+  const [reservationsError, setReservationsError] = useState(null); // if error in reservations
 
+  /**
+   * Make an API call to get all reservations if we are editing, filling in the form.
+   */
+  // to load the "reservation to edit"
   // if EDIT form is passed in as true
-  if (edit) {
-    // if either of these don't exist, we cannot continue.
-    if (!reservations || !reservation_id) return null;
+  useEffect(() => {
+    if (edit) {
+      // if either of these don't exist, we cannot continue.
+      if (!reservations || !reservation_id) return null;
 
-    // let's try to find the corresponding reservation:
-    const foundReservation = reservations.find(
-      (reservation) => reservation.reservation_id === Number(reservation_id)
-    );
+      // let's try to find the corresponding reservation:
+      const foundReservation = reservations.find(
+        (reservation) => reservation.reservation_id === Number(reservation_id)
+      );
 
-    // if it doesn't exist, or the reservation is booked, we cannot edit.
-    if (!foundReservation || foundReservation.status !== "booked") {
-      return <p>Only booked reservations can be edited.</p>;
+      // if it doesn't exist, or the reservation isnt booked, we cannot edit.
+      if (!foundReservation || foundReservation.status !== "booked") {
+        return <p>Only booked reservations can be edited.</p>;
+      }
+
+      const date = new Date(foundReservation.reservation_date);
+      const dateString = `${date.getFullYear()}-${(
+        "0" +
+        (date.getMonth() + 1)
+      ).slice(-2)}-${("0" + date.getDate()).slice(-2)}`;
+
+      // if foundReservation, set the form fields with the pre-existing data
+      setFormData({
+        first_name: foundReservation.first_name,
+        last_name: foundReservation.last_name,
+        mobile_number: foundReservation.mobile_number,
+        // reservation_date: foundReservation.reservation_date,
+        reservation_date: dateString,
+        reservation_time: foundReservation.reservation_time,
+        people: foundReservation.people,
+        reservation_id: foundReservation.reservation_id,
+      });
     }
-
-    // if foundReservation, set the form fields with the pre-existing data
-    setFormData({
-      first_name: foundReservation.first_name,
-      last_name: foundReservation.last_name,
-      mobile_number: foundReservation.mobile_number,
-      reservation_date: foundReservation.reservation_date,
-      reservation_time: foundReservation.reservation_time,
-      people: foundReservation.people,
-      reservation_id: foundReservation.reservation_id,
-    });
-  }
+  }, [edit, reservation_id]);
 
   // setting the form/card data (this records your keystroke but it doesn't save until SUBMIT)
   // aka everytime a user makes a change to an input, we want to record that as a state.
@@ -59,15 +79,34 @@ export default function NewReservation({ edit, reservations }) {
   //   this is a function that records the submission.
   function handleSubmit(event) {
     event.preventDefault(); // prevents from refreshing the entire page.
+    const abortController = new AbortController();
 
     const foundErrors = [];
+    console.log("edit", edit);
+    console.log("reservations", reservations);
+    console.log("formData", formData);
 
     // the push function will "push" the user to reservation date if validation passes
     if (validateFields(foundErrors) && validateDate(foundErrors)) {
-      history.push(`/dashboard?date=${formData.reservation_date}`);
+      if (edit) {
+        editReservation(reservation_id, formData, abortController.signal)
+          .then(loadDashboard)
+          .then(() =>
+            history.push(`/dashboard?date=${formData.reservation_date}`)
+          )
+          .catch(setApiError);
+      } else {
+        createReservation(formData, abortController.signal)
+          .then(loadDashboard)
+          .then(() =>
+            history.push(`/dashboard?date=${formData.reservation_date}`)
+          )
+          .catch(setApiError);
+      }
     }
 
     setErrors(foundErrors);
+    return () => abortController.abort();
   }
 
   // validate that all fields are filled in
@@ -170,6 +209,8 @@ export default function NewReservation({ edit, reservations }) {
   return (
     <form>
       {displayErrors()}
+      <ErrorAlert error={apiError} />
+      <ErrorAlert error={reservationsError} />
       {/* First Name */}
       <label htmlFor="first_name">First Name: &nbsp;</label>
       <input
