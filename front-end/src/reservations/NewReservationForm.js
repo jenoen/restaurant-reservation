@@ -70,11 +70,43 @@ export default function NewReservation({ edit, reservations, loadDashboard }) {
   // setting the form/card data (this records your keystroke but it doesn't save until SUBMIT)
   // aka everytime a user makes a change to an input, we want to record that as a state.
   const handleChange = ({ target }) => {
-    setFormData({
-      ...formData,
-      [target.name]: target.value,
-    });
+    if (target.name === "mobile_number") {
+      const formatted = formatPhoneNumber(target.value);
+      setFormData({
+        ...formData,
+        [target.name]: formatted,
+      });
+    } else if (target.name === "people") {
+      let newValue = Number(target.value);
+      if (newValue === "") {
+        newValue = 5;
+      }
+      setFormData({
+        ...formData,
+        [target.name]: newValue,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [target.name]: target.value,
+      });
+    }
   };
+
+  // formats the phone number nicely
+  function formatPhoneNumber(value) {
+    if (!value) return value;
+    const phoneNumber = value.replace(/[^\d]/g, "");
+    const phoneNumberLength = phoneNumber.length;
+    if (phoneNumberLength < 4) return phoneNumber;
+    if (phoneNumberLength < 7) {
+      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+    }
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(
+      3,
+      6
+    )}-${phoneNumber.slice(6, 10)}`;
+  }
 
   //   this is a function that records the submission.
   function handleSubmit(event) {
@@ -223,7 +255,7 @@ export default function NewReservation({ edit, reservations, loadDashboard }) {
       />
 
       {/* Last Name */}
-      <label htmlFor="first_name">Last Name: &nbsp;</label>
+      <label htmlFor="last_name">Last Name: &nbsp;</label>
       <input
         name="last_name"
         id="last_name"
@@ -238,7 +270,7 @@ export default function NewReservation({ edit, reservations, loadDashboard }) {
       <input
         name="mobile_number"
         id="mobile_number"
-        type="tel"
+        type="text"
         onChange={handleChange} // we will add this in soon!
         value={formData.mobile_number} // this as well!
         required // this will make the field non-nullable
