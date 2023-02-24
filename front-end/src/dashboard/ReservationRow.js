@@ -1,10 +1,15 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { updateReservationStatus } from "../utils/api";
 
 // pass in reservation as a prop!
-export default function ReservationRow({ reservation }) {
+export default function ReservationRow({ reservation, loadDashboard }) {
   // aka return nothing if no reservation OR if reservation is finished ... we dont want it shown on dashboard
   if (!reservation || reservation.status === "finished") return null;
 
+  /**
+   * This function is called if the user wants to cancel a reservation.
+   */
   function handleCancel() {
     if (
       window.confirm(
@@ -12,8 +17,16 @@ export default function ReservationRow({ reservation }) {
       )
     ) {
       // api call will go here eventually
+      const abortController = new AbortController();
 
-      window.location.reload();
+      updateReservationStatus(
+        reservation.reservation_id,
+        "cancelled",
+        abortController.status
+      ).then(loadDashboard);
+
+      return () => abortController.abort();
+      // window.location.reload();
     }
   }
 

@@ -27,13 +27,18 @@ function Dashboard({
       <ReservationRow
         key={reservation.reservation_id}
         reservation={reservation}
+        loadDashboard={loadDashboard}
       />
     ));
   };
 
   const tablesBodyDisplay = () => {
     return tables.map((table) => (
-      <TableRow key={table.table_id} table={table} />
+      <TableRow
+        key={table.table_id}
+        table={table}
+        loadDashboard={loadDashboard}
+      />
     ));
   };
 
@@ -47,8 +52,8 @@ function Dashboard({
       {/* {JSON.stringify(reservations)} */}
 
       {/* table for reservations */}
-      <table class="table">
-        <thead class="thead-light">
+      <table className="table">
+        <thead className="thead-light">
           <tr>
             <th scope="col">ID</th>
             <th scope="col">First Name</th>
@@ -66,12 +71,15 @@ function Dashboard({
         <tbody>{reservationsBodyDisplay()}</tbody>
       </table>
 
+      <br />
+      <br />
+      
       {/* table for Tables */}
       <h4 className="mb-0">Tables</h4>
 
       <ErrorAlert error={tablesError} />
 
-      <table class="table">
+      <table className="table">
         <thead>
           <tr>
             <th scope="col">ID</th>
@@ -81,9 +89,7 @@ function Dashboard({
           </tr>
         </thead>
 
-        <tbody>
-          <tr>{tablesBodyDisplay()}</tr>
-        </tbody>
+        <tbody>{tablesBodyDisplay()}</tbody>
       </table>
 
       {/* buttons to switch to different dates */}

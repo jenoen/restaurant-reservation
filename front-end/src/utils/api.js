@@ -91,3 +91,23 @@ export async function createTable(table, signal) {
 
   return await fetchJson(url, { headers, signal, method: "POST", body }, []);
 }
+
+/**
+ * Finishes a table.
+ */
+export async function finishTable(table_id, signal) {
+  const url = `${API_BASE_URL}/tables/${table_id}/seat`;
+
+  return await fetchJson(url, { headers, signal, method: "DELETE" }, []);
+}
+
+/**
+ * Updates a reservation's status.
+ */
+export async function updateReservationStatus(reservation_id, status, signal) {
+  const url = `${API_BASE_URL}/reservations/${reservation_id}/status`;
+
+  const body = JSON.stringify({ data: { status: status } });
+
+  return await fetchJson(url, { headers, signal, method: "PUT", body }, []);
+}

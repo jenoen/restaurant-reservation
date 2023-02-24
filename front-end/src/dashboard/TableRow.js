@@ -1,15 +1,16 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
+import { finishTable } from "../utils/api";
 
-export default function TableRow({ table }) {
+export default function TableRow({ table, loadDashboard }) {
   const history = useHistory();
 
   // aka if no table, return nothings
   if (!table) return null;
 
-  // window.confirm will show a dialogue that will give an "OK" button or a "Cancel" button.
-  // it will return true if the OK button is pressed, and false for cancel
-  // the dashboard should reload if OK is pressed, i use history here for that reason
+  // window.confirm will show a dialogue
+  // Called when the user wants to finish a table that is currently seated.
+  // the dashboard should reload if OK is pressed
   function handleFinish() {
     if (
       window.confirm(
@@ -17,7 +18,11 @@ export default function TableRow({ table }) {
       )
     ) {
       // delete request here, we will add this later
-      history.push("/dashboard");
+      const abortController = new AbortController();
+      finishTable(table.table_id, abortController.signal).then(loadDashboard);
+
+      history.push("/dashboard"); // kept this here
+      return () => abortController.abort();
     }
   }
 
@@ -27,7 +32,9 @@ export default function TableRow({ table }) {
       <td>{table.table_name}</td>
       <td>{table.capacity}</td>
       <td data-table-id-status={table.table_id}>{table.status}</td>
+      {/* added this */}
 
+      <td>{table.reservation_id ? table.reservation_id : "--"}</td>
       {/* i used an && here. the button will only show up if the table's status is occupied. */}
       {table.status === "occupied" && (
         <td data-table-id-finish={table.table_id}>
