@@ -1,17 +1,13 @@
 // new component for creating a new reservation
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert.js";
-import {
-  createReservation,
-  editReservation,
-  listReservations,
-} from "../utils/api";
+import { createReservation } from "../utils/api";
 
 // name of new component NewReservation:
-export default function NewReservation({ edit, reservations, loadDashboard }) {
+export default function NewReservation({ loadDashboard }) {
   const history = useHistory();
-  const { reservation_id } = useParams();
+  // const { reservation_id } = useParams();
 
   // holds the new reservation form data
   const [formData, setFormData] = useState({
@@ -23,49 +19,47 @@ export default function NewReservation({ edit, reservations, loadDashboard }) {
     people: 1,
   });
   // another state to hold errors
-  const [errors, setErrors] = useState([]);
-  const [apiError, setApiError] = useState(null); // if error in API call
-  const [reservationsError, setReservationsError] = useState(null); // if error in reservations
+  const [error, setError] = useState(null);
 
   /**
    * Make an API call to get all reservations if we are editing, filling in the form.
    */
   // to load the "reservation to edit"
   // if EDIT form is passed in as true
-  useEffect(() => {
-    if (edit) {
-      // if either of these don't exist, we cannot continue.
-      if (!reservations || !reservation_id) return null;
+  // useEffect(() => {
+  //   if (edit) {
+  //     // if either of these don't exist, we cannot continue.
+  //     if (!reservations || !reservation_id) return null;
 
-      // let's try to find the corresponding reservation:
-      const foundReservation = reservations.find(
-        (reservation) => reservation.reservation_id === Number(reservation_id)
-      );
+  //     // let's try to find the corresponding reservation:
+  //     const foundReservation = reservations.find(
+  //       (reservation) => reservation.reservation_id === Number(reservation_id)
+  //     );
 
-      // if it doesn't exist, or the reservation isnt booked, we cannot edit.
-      if (!foundReservation || foundReservation.status !== "booked") {
-        return <p>Only booked reservations can be edited.</p>;
-      }
+  //     // if it doesn't exist, or the reservation isnt booked, we cannot edit.
+  //     if (!foundReservation || foundReservation.status !== "booked") {
+  //       return <p>Only booked reservations can be edited.</p>;
+  //     }
 
-      const date = new Date(foundReservation.reservation_date);
-      const dateString = `${date.getFullYear()}-${(
-        "0" +
-        (date.getMonth() + 1)
-      ).slice(-2)}-${("0" + date.getDate()).slice(-2)}`;
+  //     const date = new Date(foundReservation.reservation_date);
+  //     const dateString = `${date.getFullYear()}-${(
+  //       "0" +
+  //       (date.getMonth() + 1)
+  //     ).slice(-2)}-${("0" + date.getDate()).slice(-2)}`;
 
-      // if foundReservation, set the form fields with the pre-existing data
-      setFormData({
-        first_name: foundReservation.first_name,
-        last_name: foundReservation.last_name,
-        mobile_number: foundReservation.mobile_number,
-        // reservation_date: foundReservation.reservation_date,
-        reservation_date: dateString,
-        reservation_time: foundReservation.reservation_time,
-        people: foundReservation.people,
-        reservation_id: foundReservation.reservation_id,
-      });
-    }
-  }, [edit, reservation_id]);
+  //     // if foundReservation, set the form fields with the pre-existing data
+  //     setFormData({
+  //       first_name: foundReservation.first_name,
+  //       last_name: foundReservation.last_name,
+  //       mobile_number: foundReservation.mobile_number,
+  //       // reservation_date: foundReservation.reservation_date,
+  //       reservation_date: dateString,
+  //       reservation_time: foundReservation.reservation_time,
+  //       people: foundReservation.people,
+  //       reservation_id: foundReservation.reservation_id,
+  //     });
+  //   }
+  // }, [edit, reservation_id]);
 
   // setting the form/card data (this records your keystroke but it doesn't save until SUBMIT)
   // aka everytime a user makes a change to an input, we want to record that as a state.
@@ -75,15 +69,6 @@ export default function NewReservation({ edit, reservations, loadDashboard }) {
       setFormData({
         ...formData,
         [target.name]: formatted,
-      });
-    } else if (target.name === "people") {
-      let newValue = Number(target.value);
-      if (newValue === "") {
-        newValue = 5;
-      }
-      setFormData({
-        ...formData,
-        [target.name]: newValue,
       });
     } else {
       setFormData({
@@ -109,36 +94,35 @@ export default function NewReservation({ edit, reservations, loadDashboard }) {
   }
 
   //   this is a function that records the submission.
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault(); // prevents from refreshing the entire page.
-    const abortController = new AbortController();
-
     const foundErrors = [];
-    console.log("edit", edit);
-    console.log("reservations", reservations);
-    console.log("formData", formData);
+    try {
+      const abortController = new AbortController();
+      formData.people = Number(formData.people);
 
-    // the push function will "push" the user to reservation date if validation passes
-    if (validateFields(foundErrors) && validateDate(foundErrors)) {
-      if (edit) {
-        editReservation(reservation_id, formData, abortController.signal)
-          .then(loadDashboard)
-          .then(() =>
-            history.push(`/dashboard?date=${formData.reservation_date}`)
-          )
-          .catch(setApiError);
-      } else {
-        createReservation(formData, abortController.signal)
-          .then(loadDashboard)
-          .then(() =>
-            history.push(`/dashboard?date=${formData.reservation_date}`)
-          )
-          .catch(setApiError);
+      if (validateFields(foundErrors) && validateDate(foundErrors)) {
+        const response = await createReservation(
+          { ...formData },
+          abortController.signal
+        );
+        loadDashboard();
+        history.push(`/dashboard?date=${formData.reservation_date}`);
+        return response;
       }
+      setError(foundErrors);
+      console.log("foundErrors", foundErrors);
+      console.log("foundErrors type", typeof foundErrors);
+    } catch (error) {
+      setError(...foundErrors, error);
+      console.error(error);
     }
+    console.log("foundErrors", foundErrors);
+  }
 
-    setErrors(foundErrors);
-    return () => abortController.abort();
+  // handles Canceling to go back to previous page
+  function handleCancel() {
+    history.goBack();
   }
 
   // validate that all fields are filled in
@@ -161,7 +145,7 @@ export default function NewReservation({ edit, reservations, loadDashboard }) {
     return true;
   }
 
-  // validate date function - make sure date is NOT reserved on Tuesdays
+  //validate date function - make sure date is NOT reserved on Tuesdays
   function validateDate(foundErrors) {
     const reserveDate = new Date(
       `${formData.reservation_date}T${formData.reservation_time}:00.000`
@@ -233,16 +217,26 @@ export default function NewReservation({ edit, reservations, loadDashboard }) {
     return true;
   }
 
-  // function to display the errors we have received - to be inserted with "form component"
+  // function to display multiple errors we have received - to be inserted with "form component"
   const displayErrors = () => {
-    return errors.map((error, idx) => <ErrorAlert key={idx} error={error} />);
+    let errorMessages = [];
+    console.log("error", error);
+
+    for (let object in error) {
+      console.log("error.object", error[object]);
+      errorMessages.push(error[object]);
+    }
+
+    console.log("errorMessages", errorMessages);
+    return errorMessages.map((eachError, idx) => (
+      <ErrorAlert key={idx} error={eachError} />
+    ));
   };
 
   return (
     <form>
       {displayErrors()}
-      <ErrorAlert error={apiError} />
-      <ErrorAlert error={reservationsError} />
+
       {/* First Name */}
       <label htmlFor="first_name">First Name: &nbsp;</label>
       <input
@@ -314,7 +308,11 @@ export default function NewReservation({ edit, reservations, loadDashboard }) {
         Submit
       </button>
       {/* button for cancel*/}
-      <button type="button" onClick={history.goBack}>
+      <button
+        type="button"
+        // onClick={history.goBack}
+        onClick={() => history.goBack()}
+      >
         Cancel
       </button>
     </form>
