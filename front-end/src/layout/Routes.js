@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { listReservations, listTables } from "../utils/api";
+import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
+import { today } from "../utils/date-time";
+
+import NotFound from "./NotFound";
 import Dashboard from "../dashboard/Dashboard";
 import NewReservation from "../reservations/NewReservationForm";
-import NotFound from "./NotFound";
-import useQuery from "../utils/useQuery";
-import CreateNewTable from "../tables/CreateNewTable";
-import ReservationSeating from "../reservations/ReservationSeating";
+import NewTable from "../tables/NewTable";
+import Seat from "../reservations/Seat.js";
 import Search from "../search/Search";
-import { today } from "../utils/date-time";
+import EditReservation from "../reservations/EditReservation";
 
 /**
  * Defines all the routes for the application.
@@ -18,88 +18,73 @@ import { today } from "../utils/date-time";
  * @returns {JSX.Element}
  */
 function Routes() {
-  // shorthand variables
-  const query = useQuery();
-  const date = query.get("date");
+  // const [reservations, setReservations] = useState([]);
+  // const [reservationsError, setReservationsError] = useState(null);
+  // const [tables, setTables] = useState([]);
+  // const [tablesError, setTablesError] = useState(null);
 
-  const [reservations, setReservations] = useState([]);
-  const [reservationsError, setReservationsError] = useState(null);
-  const [tables, setTables] = useState([]);
-  const [tablesError, setTablesError] = useState(null);
+  // // useEffect will call the loadDashboard function every time the 'date' variable changes
+  // useEffect(loadDashboard, [date]);
 
-  // useEffect will call the loadDashboard function every time the 'date' variable changes
-  useEffect(loadDashboard, [date]);
+  // /**
+  //  * Grabs all current reservations and tables from an API call.
+  //  */
+  // function loadDashboard() {
+  //   const abortController = new AbortController();
+  //   setReservationsError(null);
+  //   setTablesError(null);
 
-  /**
-   * Grabs all current reservations and tables from an API call.
-   */
-  function loadDashboard() {
-    const abortController = new AbortController();
-    setReservationsError(null);
-    setTablesError(null);
-
-    // API call
-    listReservations({ date: date }, abortController.signal)
-      .then(setReservations)
-      .catch(setReservationsError);
-    listTables(abortController.signal)
-      .then((tables) =>
-        tables.sort((tableA, tableB) => tableA.table_id - tableB.table_id)
-      )
-      .then(setTables)
-      .catch(setTablesError);
-    return () => abortController.abort();
-  }
+  //   // API call
+  //   listReservations({ date: date }, abortController.signal)
+  //     .then(setReservations)
+  //     .catch(setReservationsError);
+  //   listTables(abortController.signal)
+  //     .then((tables) =>
+  //       tables.sort((tableA, tableB) => tableA.table_id - tableB.table_id)
+  //     )
+  //     .then(setTables)
+  //     .catch(setTablesError);
+  //   return () => abortController.abort();
+  // }
 
   return (
     <Switch>
+      {/* goes to dashboard redirects */}
       <Route exact={true} path="/">
         <Redirect to={`/dashboard`} />
       </Route>
       <Route exact={true} path="/reservations">
         <Redirect to={`/dashboard`} />
       </Route>
+      <Route path="/dashboard">
+        <Dashboard today={today()} />
+      </Route>
+      <Route path="/dashboard/:date">
+        <Dashboard />
+      </Route>
 
+      {/* reservations pages */}
       <Route exact={true} path="/reservations/new">
-        <NewReservation loadDashboard={loadDashboard} />
+        <NewReservation />
       </Route>
       <Route exact={true} path="/reservations/:reservation_id/seat">
-        <ReservationSeating
-          reservations={reservations}
-          tables={tables}
-          loadDashboard={loadDashboard}
-        />
+        <Seat />
       </Route>
-
       <Route path="/reservations/:reservation_id/edit">
-        <NewReservation
-          loadDashboard={loadDashboard}
-          edit={true}
-          reservations={reservations}
-        />
+        <EditReservation />
       </Route>
 
-      <Route path="/reservations/:reservation_id/seat">
-        <ReservationSeating tables={tables} loadDashboard={loadDashboard} />
-      </Route>
-      <Route exact={true} path="/tables/new">
-        <CreateNewTable loadDashboard={loadDashboard} />
+      {/* tables pages */}
+      <Route path="/tables/new">
+        <NewTable />
       </Route>
 
-      <Route path="/dashboard">
-        <Dashboard
-          date={date ? date : today()}
-          reservations={reservations}
-          reservationsError={reservationsError}
-          tables={tables}
-          tablesError={tablesError}
-          loadDashboard={loadDashboard}
-        />
-      </Route>
-
-      <Route path="/search">
+      {/* search */}
+      <Route exact={true} path="/search">
         <Search />
       </Route>
+
+      {/* not found */}
       <Route>
         <NotFound />
       </Route>

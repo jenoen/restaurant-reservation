@@ -2,47 +2,96 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { finishTable } from "../utils/api";
 
-export default function TableRow({ table, loadDashboard }) {
+export default function TableRow({ table, setError }) {
   const history = useHistory();
 
-  // aka if no table, return nothings
-  if (!table) return null;
+  // displays table status depending if there is a reservation ID
+  function tableStatus(reservation_id) {
+    return reservation_id ? "Occupied" : "Free";
+  }
 
-  // window.confirm will show a dialogue
-  // Called when the user wants to finish a table that is currently seated.
-  // the dashboard should reload if OK is pressed
-  function handleFinish() {
-    if (
-      window.confirm(
-        "Is this table ready to seat new guests? This cannot be undone."
-      )
-    ) {
-      // delete request here, we will add this later
-      const abortController = new AbortController();
-      finishTable(table.table_id, abortController.signal).then(loadDashboard);
+  // button to clear/finish the table
+  function showFinishButton(table, reservationId) {
+    if (reservationId) {
+      return (
+        <button
+          className="btn btn-light btn-sm"
+          data-table-id-finish={table.table_id}
+          onClick={() => finish(table)}
+        >
+          Finish
+        </button>
+      );
+    }
+    return (
+      <button
+        className="btn btn-light btn-sm"
+        data-table-id-finish={table.table_id}
+        disabled
+      >
+        Empty
+      </button>
+    );
+  }
 
-      history.push("/dashboard"); // kept this here
-      return () => abortController.abort();
+  // function to finish table/clear the reservation ID associated
+  async function finish(table) {
+    const abortController = new AbortController();
+    try {
+      if (
+        window.confirm(
+          `Is this table ready to seat new guests? This cannot be undone.`
+        )
+      ) {
+        const response = await finishTable(table, abortController.signal);
+        history.go(0);
+        return response;
+      }
+    } catch (error) {
+      setError(error);
+      console.error(error);
     }
   }
 
+  // // aka if no table, return nothings
+  // if (!table) return null;
+
+  // // window.confirm will show a dialogue
+  // // Called when the user wants to finish a table that is currently seated.
+  // // the dashboard should reload if OK is pressed
+  // function handleFinish() {
+  //   if (
+  //     window.confirm(
+  //       "Is this table ready to seat new guests? This cannot be undone."
+  //     )
+  //   ) {
+  //     // delete request here, we will add this later
+  //     const abortController = new AbortController();
+  //     finishTable(table.table_id, abortController.signal).then(loadDashboard);
+
+  //     history.push("/dashboard"); // kept this here
+  //     return () => abortController.abort();
+  //   }
+  // }
+
   return (
-    <tr>
-      <th scope="row">{table.table_id}</th>
+    <tr
+      className="text-truncate"
+      style={{ height: "48px" }}
+      key={table.table_id}
+    >
+      <th className="d-none d-md-table-cell" scope="row">
+        {table.table_id}
+      </th>
       <td>{table.table_name}</td>
       <td>{table.capacity}</td>
-      <td data-table-id-status={table.table_id}>{table.status}</td>
-      {/* added this */}
-
-      <td>{table.reservation_id ? table.reservation_id : "--"}</td>
-      {/* i used an && here. the button will only show up if the table's status is occupied. */}
-      {table.status === "occupied" && (
-        <td data-table-id-finish={table.table_id}>
-          <button onClick={handleFinish} type="button">
-            Finish
-          </button>
-        </td>
-      )}
+      <td
+        className="d-none d-md-table-cell"
+        data-table-id-status={table.table_id}
+      >
+        {tableStatus(table.reservation_id)}
+      </td>
+      <td>{showFinishButton(table, table.reservation_id)}</td>
     </tr>
   );
 }

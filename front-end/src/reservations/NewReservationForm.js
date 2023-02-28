@@ -5,7 +5,7 @@ import ErrorAlert from "../layout/ErrorAlert.js";
 import { createReservation } from "../utils/api";
 
 // name of new component NewReservation:
-export default function NewReservation({ loadDashboard }) {
+export default function NewReservation() {
   const history = useHistory();
   // const { reservation_id } = useParams();
 
@@ -106,23 +106,14 @@ export default function NewReservation({ loadDashboard }) {
           { ...formData },
           abortController.signal
         );
-        loadDashboard();
+        // loadDashboard();
         history.push(`/dashboard?date=${formData.reservation_date}`);
         return response;
       }
       setError(foundErrors);
-      console.log("foundErrors", foundErrors);
-      console.log("foundErrors type", typeof foundErrors);
     } catch (error) {
       setError(...foundErrors, error);
-      console.error(error);
     }
-    console.log("foundErrors", foundErrors);
-  }
-
-  // handles Canceling to go back to previous page
-  function handleCancel() {
-    history.goBack();
   }
 
   // validate that all fields are filled in
