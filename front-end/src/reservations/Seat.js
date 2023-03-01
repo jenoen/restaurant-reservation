@@ -67,8 +67,9 @@ export default function Seat() {
     }
   }
 
-  async function handleSubmit({ target }) {
-    target.preventDefault();
+  async function handleSubmit(event) {
+    event.preventDefault();
+
     if (table) {
       try {
         const abortController = new AbortController();
@@ -76,6 +77,7 @@ export default function Seat() {
           { ...table, reservation_id: reservation_id },
           abortController.signal
         );
+
         history.push(`/`);
         const reservation = await findReservation(
           reservation_id,

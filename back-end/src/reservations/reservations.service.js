@@ -2,57 +2,60 @@ const knex = require("../db/connection");
 
 const tableName = "reservations";
 
-function list(date, mobile_number) {
-  if (date) {
-    return knex(tableName)
-      .select("*")
-      .where({ reservation_date: date })
-      .orderBy("reservation_time", "asc");
-  }
-
-  if (mobile_number) {
-    // return knex(tableName)
-    //   .select("*")
-    //   .where("mobile_number", "like", `${mobile_number}%`);
+function list(query) {
+  const dateFormat =
+    /^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$/;
+  if (!query.match(dateFormat)) {
     return knex("reservations")
       .whereRaw(
         "translate(mobile_number, '() -', '') like ?",
-        `%${mobile_number.replace(/\D/g, "")}%`
+        `%${query.replace(/\D/g, "")}%`
       )
-      .orderBy("reservation_date");
+      .orderBy("reservation_time", "asc");
   }
-
-  return knex(tableName).select("*");
+  return knex(tableName)
+    .select("*")
+    .where({ reservation_date: query })
+    .whereNot({ status: "finished" })
+    .orderBy("reservation_time", "asc");
 }
 
 function create(reservation) {
   return knex(tableName).insert(reservation).returning("*");
 }
 
-function read(reservation_id) {
+function find(reservation_id) {
   return knex(tableName)
     .select("*")
     .where({ reservation_id: reservation_id })
     .first();
 }
 
-function update(reservation_id, status) {
+function updateStatus(reservationId, status) {
   return knex(tableName)
-    .where({ reservation_id: reservation_id })
-    .update({ status: status });
+    .select("*")
+    .where({ reservation_id: reservationId })
+    .update({ status: status }, "*");
 }
 
-function edit(reservation_id, reservation) {
-  return knex(tableName)
-    .where({ reservation_id: reservation_id })
-    .update({ ...reservation })
-    .returning("*");
+function edit(data) {
+  return knex(tableName).where({ reservation_id: data.reservation_id }).update(
+    {
+      first_name: data.first_name,
+      last_name: data.last_name,
+      mobile_number: data.mobile_number,
+      reservation_date: data.reservation_date,
+      reservation_time: data.reservation_time,
+      people: data.people,
+    },
+    "*"
+  );
 }
 
 module.exports = {
-  list,
   create,
-  read,
-  update,
+  list,
+  find,
   edit,
+  updateStatus,
 };

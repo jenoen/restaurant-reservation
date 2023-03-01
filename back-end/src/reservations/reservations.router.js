@@ -9,15 +9,22 @@ const controller = require("./reservations.controller");
 const methodNotAllowed = require("../errors/methodNotAllowed");
 
 router
+  .route("/:reservation_id/edit")
+  .put(controller.edit)
+  .all(methodNotAllowed);
+
+router
   .route("/:reservation_id/status")
   .put(controller.update)
   .all(methodNotAllowed);
 
 router
   .route("/:reservation_id")
-  .get(controller.read)
+  .get(controller.find)
   .put(controller.edit)
   .all(methodNotAllowed);
+
+router.route("/new").post(controller.create).all(methodNotAllowed);
 
 router
   .route("/")
