@@ -38,7 +38,7 @@ export default function ReservationRow({ reservation, tables, setError }) {
       </a>
     );
     // }
-    return null;
+    // return null;
   }
 
   // button to edit the reservation
