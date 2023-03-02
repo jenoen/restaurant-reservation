@@ -7,7 +7,8 @@ function list() {
 }
 
 function create(table) {
-  return knex(tableName).insert(table).returning("*");
+  return knex(tableName).insert(table, "*");
+  // .returning("*");
 }
 
 function update(updatedTable, table) {

@@ -111,12 +111,24 @@ export async function listTables(signal) {
   return await fetchJson(url, { headers, signal }, []);
 }
 
+// export async function createTable(table, signal) {
+//   const url = `${API_BASE_URL}/tables`;
+
+//   const body = JSON.stringify({ data: table });
+
+//   return await fetchJson(url, { headers, signal, method: "POST", body }, []);
+// }
+
+// create a new Table
 export async function createTable(table, signal) {
-  const url = `${API_BASE_URL}/tables`;
-
-  const body = JSON.stringify({ data: table });
-
-  return await fetchJson(url, { headers, signal, method: "POST", body }, []);
+  const url = `${API_BASE_URL}/tables/new`;
+  const options = {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ data: table }),
+    signal,
+  };
+  return await fetchJson(url, options);
 }
 
 /**

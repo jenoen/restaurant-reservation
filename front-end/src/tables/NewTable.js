@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
 import { createTable } from "../utils/api";
 
-export default function NewTable({ loadDashboard }) {
+export default function NewTable() {
   const history = useHistory();
 
   //to hold errors
@@ -26,17 +26,17 @@ export default function NewTable({ loadDashboard }) {
       const abortController = new AbortController();
 
       formData.capacity = Number(formData.capacity);
-      const response = await createTable(
-        { ...formData },
-        abortController.signal
-      );
-      loadDashboard();
+      // console.log("formData.capacity", formData.capacity);
+      // console.log("formData.capacity TYPE", typeof formData.capacity);
+
+      const response = await createTable(formData, abortController.signal);
+
       history.push(`/dashboard`);
       return response;
       // }
     } catch (error) {
       setError(error);
-      console.error(error);
+      console.error("newTable.js", error);
     }
   }
 

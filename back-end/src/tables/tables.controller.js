@@ -87,37 +87,67 @@ function hasReservationId(req, res, next) {
 // check if body has table name
 function hasTableName(req, res, next) {
   const tableName = req.body.data.table_name;
-  if (tableName) {
-    if (validateTableName(tableName)) {
-      return next();
-    }
-    next({
+  // if (tableName && tableName !== "") {
+  //   if (validateTableName(tableName)) {
+  //     return next();
+  //   }
+  //   next({
+  //     status: 400,
+  //     message: `${tableName} is not a valid table_name`,
+  //   });
+  // }
+  // next({
+  //   status: 400,
+  //   message: "data must have table_name property",
+  // });
+
+  if (!req.body.data.table_name || req.body.data.table_name === "") {
+    return next({ status: 400, message: "'table_name' field cannot be empty" });
+  }
+
+  if (req.body.data.table_name.length < 2) {
+    return next({
       status: 400,
-      message: `${tableName} is not a valid table_name`,
+      message: "'table_name' field must be at least 2 characters",
     });
   }
-  next({
-    status: 400,
-    message: "data must have table_name property",
-  });
+
+  next();
 }
 
 // checks if body has a valid capacity/number of people at table
 function hasCapacity(req, res, next) {
   const capacity = req.body.data.capacity;
-  if (capacity) {
-    if (validateCapacity(capacity)) {
-      return next();
-    }
-    next({
+  // if (capacity) {
+  //   if (validateCapacity(capacity)) {
+  //     return next();
+  //   }
+  //   next({
+  //     status: 400,
+  //     message: `${capacity} is not a valid capacity`,
+  //   });
+  // }
+  // next({
+  //   status: 400,
+  //   message: "data must have capacity property",
+  // });
+
+  if (!req.body.data.capacity || req.body.data.capacity === "") {
+    return next({ status: 400, message: "'capacity' field cannot be empty" });
+  }
+
+  if (typeof req.body.data.capacity !== "number") {
+    return next({ status: 400, message: "'capacity' field must be a number" });
+  }
+
+  if (req.body.data.capacity < 1) {
+    return next({
       status: 400,
-      message: `${capacity} is not a valid capacity`,
+      message: "'capacity' field must be at least 1",
     });
   }
-  next({
-    status: 400,
-    message: "data must have capacity property",
-  });
+
+  next();
 }
 
 // checks if table has reservation id associated - if so, it's occupied
