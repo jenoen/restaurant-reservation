@@ -36,10 +36,10 @@ function Dashboard({ today }) {
           { selectedDate },
           abortController.signal
         );
+
         setReservations(response);
       } catch (error) {
         setError(error);
-        console.error(error);
       }
       // lists the tables
       try {

@@ -5,8 +5,8 @@
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
-// TO LIST ALL THE RESERVATIONS (could be searched by specified variables)
-// could be edit in this section to similar to dj
+// // TO LIST ALL THE RESERVATIONS (could be searched by specified variables)
+// // could be edit in this section to similar to dj
 async function list(req, res) {
   const date = req.query.date;
   const mobile_number = req.query.mobile_number;
@@ -18,6 +18,12 @@ async function list(req, res) {
 
   res.json({ data: response });
 }
+
+// async function list(req, res, next) {
+//   const query = req.query.date || req.query.mobile_number;
+//   const data = await service.list(query);
+//   res.json({ data });
+// }
 
 // creates the reservation!!
 async function create(req, res) {
@@ -40,6 +46,7 @@ async function edit(req, res) {
 async function find(req, res, next) {
   const reservationId = req.params.reservation_id;
   const reservation = await service.find(reservationId);
+  // console.log("reservations");
   if (reservation[0]) {
     return res.json({ data: reservation[0] });
   }
@@ -178,15 +185,15 @@ async function hasReservationId(req, res, next) {
   });
 }
 
-// makes sure phone number is written / filled out correctly
-function validateMobileNumber(mobileNumber) {
-  const numericMobileNumber = parseNumerals(mobileNumber);
-  console.log("oopsies");
-  return (
-    numericMobileNumber.length === 10 &&
-    numericMobileNumber.match(/^[0-9]+$/) != null
-  );
-}
+// // makes sure phone number is written / filled out correctly
+// function validateMobileNumber(mobileNumber) {
+//   const numericMobileNumber = parseNumerals(mobileNumber);
+//   console.log("oopsies");
+//   return (
+//     numericMobileNumber.length === 10 &&
+//     numericMobileNumber.match(/^[0-9]+$/) != null
+//   );
+// }
 
 // check to make sure date is correct
 function validateReservationDate(reservationDate) {
@@ -248,6 +255,7 @@ function parseNumerals(string) {
 function toDate(dateStr) {
   const [year, month, day] = dateStr.split("-");
   return new Date(year, month - 1, day);
+  // return new Date(year, month, day);
 }
 
 async function validateStatus(req, res, next) {
