@@ -42,18 +42,44 @@ async function edit(req, res) {
   res.status(200).json({ data: response[0] });
 }
 
-// finds specific reservation
-async function find(req, res, next) {
-  const reservationId = req.params.reservation_id;
-  const reservation = await service.find(reservationId);
-  // console.log("reservations");
-  if (reservation[0]) {
-    return res.json({ data: reservation[0] });
+// // finds specific reservation
+// async function read(req, res, next) {
+//   const reservationId = req.params.reservation_id;
+//   const reservation = await service.read(reservationId);
+//   // console.log("reservations");
+//   if (reservation[0]) {
+//     return res.json({ data: reservation[0] });
+//   }
+//   next({
+//     status: 404,
+//     message: `reservation ${reservationId} does not exist`,
+//   });
+// }
+
+/**
+ * Responds/send with a particular reservation.
+ */
+async function find(req, res) {
+  res.status(200).json({ data: res.locals.reservation });
+}
+
+/**
+ * Validates, finds, and stores a reservation based off of its ID.
+ */
+async function validateReservationId(req, res, next) {
+  const { reservation_id } = req.params;
+  const reservation = await service.find(Number(reservation_id));
+
+  if (!reservation) {
+    return next({
+      status: 404,
+      message: `reservation id ${reservation_id} does not exist`,
+    });
   }
-  next({
-    status: 404,
-    message: `reservation ${reservationId} does not exist`,
-  });
+
+  res.locals.reservation = reservation;
+
+  next();
 }
 
 // updates the status
@@ -403,7 +429,7 @@ async function validateStatus(req, res, next) {
 
 module.exports = {
   list: asyncErrorBoundary(list),
-  find: asyncErrorBoundary(find),
+  find: [asyncErrorBoundary(validateReservationId), asyncErrorBoundary(find)],
   create: [
     hasData,
     hasFirstName,
