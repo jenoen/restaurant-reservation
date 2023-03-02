@@ -3,11 +3,7 @@ import { Link, useHistory } from "react-router-dom";
 import { updateReservationStatus } from "../utils/api";
 
 // pass in reservation as a prop!
-export default function ReservationRow({
-  reservation,
-  tables,
-  setError,
-}) {
+export default function ReservationRow({ reservation, tables, setError }) {
   const history = useHistory();
 
   // formats time nicely
@@ -20,22 +16,28 @@ export default function ReservationRow({
 
   // shows the status of the reservation and allows to seat the reservation
   function reservationStatus(reservation) {
-    if (reservation.status === "booked") {
-      return (
-        <Link
-          to={{
-            pathname: `/reservations/${reservation.reservation_id}/seat`,
-            state: {
-              tables: tables,
-            },
-          }}
-          type="button"
-          className="btn btn-light btn-sm"
-        >
+    let reservation_id = reservation.reservation_id;
+    // if (reservation.status === "booked") {
+    return (
+      // <Link
+      //   to={{
+      //     pathname: `/reservations/${reservation.reservation_id}/seat`,
+      //     state: {
+      //       tables: tables,
+      //     },
+      //   }}
+      //   type="button"
+      //   className="btn btn-light btn-sm"
+      // >
+      //   Seat
+      // </Link>
+      <a href={`/reservations/${reservation_id}/seat`}>
+        <button className="btn btn-primary" type="button">
           Seat
-        </Link>
-      );
-    }
+        </button>
+      </a>
+    );
+    // }
     return null;
   }
 
