@@ -17,28 +17,28 @@ export default function ReservationRow({ reservation, tables, setError }) {
   // shows the status of the reservation and allows to seat the reservation
   function reservationStatus(reservation) {
     let reservation_id = reservation.reservation_id;
-    // if (reservation.status === "booked") {
-    return (
-      // <Link
-      //   to={{
-      //     pathname: `/reservations/${reservation.reservation_id}/seat`,
-      //     state: {
-      //       tables: tables,
-      //     },
-      //   }}
-      //   type="button"
-      //   className="btn btn-light btn-sm"
-      // >
-      //   Seat
-      // </Link>
-      <a href={`/reservations/${reservation_id}/seat`}>
-        <button className="btn btn-primary" type="button">
-          Seat
-        </button>
-      </a>
-    );
-    // }
-    // return null;
+    if (reservation.status === "booked") {
+      return (
+        // <Link
+        //   to={{
+        //     pathname: `/reservations/${reservation.reservation_id}/seat`,
+        //     state: {
+        //       tables: tables,
+        //     },
+        //   }}
+        //   type="button"
+        //   className="btn btn-light btn-sm"
+        // >
+        //   Seat
+        // </Link>
+        <a href={`/reservations/${reservation_id}/seat`}>
+          <button className="btn btn-primary" type="button">
+            Seat
+          </button>
+        </a>
+      );
+    }
+    return null;
   }
 
   // button to edit the reservation

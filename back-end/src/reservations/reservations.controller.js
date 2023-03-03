@@ -27,6 +27,9 @@ async function list(req, res) {
 
 // creates the reservation!!
 async function create(req, res) {
+  // console.log("res.controller req.body.data", req.body.data);
+  req.body.data.status = "booked";
+  // console.log("2 res.controller req.body.data 2", req.body.data);
   const response = await service.create(req.body.data);
 
   // when knex creates things, it'll return something in the form of an array. we only want the first object, so i access the 0th index here
@@ -249,22 +252,23 @@ function validateReservationDate(reservationDate) {
 
 function validateReservationTime(reservationTime, reservationDate) {
   const reservationTimeParsedString = parseNumerals(reservationTime);
-  reservationDate = new Date(reservationDate);
-  reservationDate.setHours(reservationTimeParsedString.substring(0, 2));
-  reservationDate.setMinutes(reservationTimeParsedString.substring(2, 4));
+  const hour = reservationTimeParsedString.substring(0, 2);
+  const minute = reservationTimeParsedString.substring(2, 4);
+  const fixedDate = reservationDate + "T" + hour + ":" + minute;
+  const fixedReserveDate = new Date(fixedDate); //here
   const now = new Date();
-  const openTime = new Date(reservationDate);
+  const openTime = new Date(fixedReserveDate);
   openTime.setHours(10);
   openTime.setMinutes(30);
   openTime.setSeconds(0);
-  const closeTime = new Date(reservationDate);
+  const closeTime = new Date(fixedReserveDate);
   closeTime.setHours(21);
   closeTime.setMinutes(30);
   closeTime.setSeconds(0);
   return (
-    reservationDate >= openTime &&
-    reservationDate <= closeTime &&
-    reservationDate >= now
+    fixedReserveDate >= openTime &&
+    fixedReserveDate <= closeTime &&
+    fixedReserveDate >= now
   );
 }
 
