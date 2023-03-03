@@ -23,7 +23,6 @@ async function update(req, res, next) {
     table[key] = Object.values(data)[i];
   });
   const response = await service.update(data, table);
-  console.log("tables.controller", response);
   if (res.locals.reservation.status === "booked") {
     await service.updateReservationStatus(response[0], "seated");
   }
