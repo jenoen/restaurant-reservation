@@ -10,7 +10,7 @@ exports.up = function (knex) {
     table.date("reservation_date").notNullable();
     table.time("reservation_time").notNullable();
     table.integer("people").notNullable();
-    table.string("status");
+    table.string("status").default("booked");
     table.timestamps(true, true); // Adds created_at and updated_at columns
   });
 };
