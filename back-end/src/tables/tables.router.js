@@ -12,7 +12,7 @@ router
   .route("/:table_id/seat")
   .get(controller.list)
   .put(controller.update)
-  .delete(controller.remove)
+  .delete(controller.free)
   .all(methodNotAllowed);
 
 router.route("/new").post(controller.create).all(methodNotAllowed);

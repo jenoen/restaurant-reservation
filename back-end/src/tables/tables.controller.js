@@ -59,7 +59,7 @@ async function update(req, res, next) {
 // finish a table
 // AKA update the reservation status and update table status
 
-async function remove(req, res, next) {
+async function free(req, res, next) {
   const tableId = req.params.table_id;
 
   // RESERVATION UPDATE : resets the res status to finish
@@ -177,7 +177,7 @@ async function validateTableId(req, res, next) {
 }
 
 /**
- * Validates a seat request to make sure it is allowed. in terms of
+ * Validates a seat request to make sure it IS ALLOWED! in terms of
  * 1) table availability
  * 2) reservation already seated or not
  * 3) max capacity of table
@@ -207,6 +207,17 @@ async function validateSeat(req, res, next) {
   next();
 }
 
+/**
+ * Makes sure table is occupied before finishing a table.
+ */
+async function validateReadyToFinish(req, res, next) {
+  if (res.locals.table.status !== "occupied") {
+    return next({ status: 400, message: "this table is not occupied" });
+  }
+
+  next();
+}
+
 module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [
@@ -222,5 +233,9 @@ module.exports = {
     asyncErrorBoundary(validateSeat),
     asyncErrorBoundary(update),
   ],
-  remove: [asyncErrorBoundary(validateTableId), asyncErrorBoundary(remove)],
+  free: [
+    asyncErrorBoundary(validateTableId),
+    asyncErrorBoundary(validateReadyToFinish),
+    asyncErrorBoundary(free),
+  ],
 };
