@@ -22,30 +22,39 @@ async function create(req, res, next) {
 
 // to update the tables whether/if it's not already seated
 async function update(req, res, next) {
-  const table = res.locals.table;
-  const data = req.body.data;
-  Object.keys(data).forEach((key, i) => {
-    table[key] = Object.values(data)[i];
-  });
-  const response = await service.updateTable(
-    table.table_id,
-    data.reservation_id
+  // const table = res.locals.table;
+  // const data = req.body.data;
+  // Object.keys(data).forEach((key, i) => {
+  //   table[key] = Object.values(data)[i];
+  // });
+  // const response = await service.updateTable(
+  //   table.table_id,
+  //   data.reservation_id
+  // );
+  // if (res.locals.reservation.status === "booked") {
+  //   await service.updateReservationStatus(table.reservation_id, "seated");
+  // }
+  // if (res.locals.reservation.status === "seated") {
+  //   next({
+  //     status: 400,
+  //     message: "status cannot be updated from seated",
+  //   });
+  // }
+  // return res.json({
+  //   data: response[0],
+  // });
+
+  await service.updateTable(
+    res.locals.table.table_id,
+    res.locals.reservation.reservation_id
   );
-  if (res.locals.reservation.status === "booked") {
-    await service.updateReservationStatus(data.reservation_id, "seated");
-  }
-  if (res.locals.reservation.status === "seated") {
-    next({
-      status: 400,
-      message: "status cannot be updated from seated",
-    });
-  }
-  return res.json({
-    data: response[0],
-  });
+  await service.updateReservationStatus(
+    res.locals.reservation.reservation_id,
+    "seated"
+  );
+
+  res.status(200).json({ data: { status: "seated" } });
 }
-
-
 
 // finish a table
 // AKA update the reservation status and update table status
@@ -54,10 +63,13 @@ async function remove(req, res, next) {
   const tableId = req.params.table_id;
 
   // RESERVATION UPDATE : resets the res status to finish
-  await service.updateReservationStatus(res.locals.table.reservation_id, "finished");
+  await service.updateReservationStatus(
+    res.locals.table.reservation_id,
+    "finished"
+  );
   // THEN TABLE UPDATE : reset table's res id to null and table status is "free"
   const response = await service.free(tableId);
-  
+
   res.status(200).json({
     data: response[0],
   });
@@ -75,25 +87,30 @@ function hasData(req, res, next) {
   });
 }
 
-
 // checks if body has reservation id included
-function validateReservationId(req, res, next) {
-const { reservation_id } = req.body.data;
+async function validateReservationId(req, res, next) {
+  const { reservation_id } = req.body.data;
 
-// if there's no id in body...
- if(!reservation_id) {
-		return next({ status: 400, message: `reservation_id field must be included in the body` });
-	}
+  // if there's no id in body...
+  if (!reservation_id) {
+    return next({
+      status: 400,
+      message: `reservation_id field must be included in the body`,
+    });
+  }
 
   // check if res id even exists
-const reservation = await service.read(Number(reservation_id));
-if(!reservation) {
-  return next({ status: 404, message: `reservation_id ${reservation_id} does not exist` });
-}
+  const reservation = await service.read(Number(reservation_id));
+  if (!reservation) {
+    return next({
+      status: 404,
+      message: `reservation_id ${reservation_id} does not exist`,
+    });
+  }
 
-res.locals.reservation = reservation;
+  res.locals.reservation = reservation;
 
-next();
+  next();
 }
 
 // check if body has table name
@@ -144,20 +161,20 @@ function hasCapacity(req, res, next) {
  * Validates, finds, and stores a table based off of its ID.
  */
 async function validateTableId(req, res, next) {
-    const { table_id } = req.params;
-    const table = await service.find(table_id);
+  const { table_id } = req.params;
+  const table = await service.find(table_id);
 
-    if(!table) {
-        return next({ status: 404, message: `table id ${table_id} does not exist` });
-    }
+  if (!table) {
+    return next({
+      status: 404,
+      message: `table id ${table_id} does not exist`,
+    });
+  }
 
-    res.locals.table = table;
+  res.locals.table = table;
 
-    next();
+  next();
 }
-
-
-
 
 /**
  * Validates a seat request to make sure it is allowed. in terms of
@@ -166,22 +183,29 @@ async function validateTableId(req, res, next) {
  * 3) max capacity of table
  */
 async function validateSeat(req, res, next) {
-    if(res.locals.table.status === "occupied") {
-        return next({ status: 400, message: "the table you selected is currently occupied" });
-    }
+  if (res.locals.table.status === "occupied") {
+    return next({
+      status: 400,
+      message: "the table you selected is currently occupied",
+    });
+  }
 
-	if(res.locals.reservation.status === "seated") {
-		return next({ status: 400, message: "the reservation you selected is already seated" });
-	}
+  if (res.locals.reservation.status === "seated") {
+    return next({
+      status: 400,
+      message: "the reservation you selected is already seated",
+    });
+  }
 
-    if(res.locals.table.capacity < res.locals.reservation.people) {
-        return next({ status: 400, message: `the table you selected does not have enough capacity to seat ${res.locals.reservation.people} people` });
-    }
+  if (res.locals.table.capacity < res.locals.reservation.people) {
+    return next({
+      status: 400,
+      message: `the table you selected does not have enough capacity to seat ${res.locals.reservation.people} people`,
+    });
+  }
 
-    next();
+  next();
 }
-
-
 
 module.exports = {
   list: [asyncErrorBoundary(list)],
@@ -193,17 +217,10 @@ module.exports = {
   ],
   update: [
     asyncErrorBoundary(hasData),
-   asyncErrorBoundary (validateReservationId),
-   asyncErrorBoundary(validateTableId),
-   asyncErrorBoundary(validateSeat),
-
-    asyncErrorBoundary(update), // need to check this!
-  ],
-  remove: [
+    asyncErrorBoundary(validateReservationId),
     asyncErrorBoundary(validateTableId),
-    asyncErrorBoundary(remove),
+    asyncErrorBoundary(validateSeat),
+    asyncErrorBoundary(update),
   ],
+  remove: [asyncErrorBoundary(validateTableId), asyncErrorBoundary(remove)],
 };
-
-
- 
