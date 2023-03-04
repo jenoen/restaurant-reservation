@@ -75,7 +75,7 @@ function EditReservation() {
     e.preventDefault();
     try {
       const abortController = new AbortController();
-      // formData.people = Number(formData.people);
+      formData.people = Number(formData.people);
 
       const response = await editReservation(
         { ...formData },
@@ -85,7 +85,7 @@ function EditReservation() {
       return response;
     } catch (error) {
       setError(error);
-      console.error(error);
+      console.error("hey", error);
     }
   }
 
@@ -196,7 +196,7 @@ function EditReservation() {
             <button
               data-reservation-id-cancel={formData.reservation_id}
               className="btn btn-secondary"
-              onChange={handleChange}
+              onClick={(e) => handleCancel(e)}
             >
               Cancel
             </button>

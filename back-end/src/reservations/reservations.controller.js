@@ -176,20 +176,8 @@ function hasReservationTime(req, res, next) {
 
 function hasPeople(req, res, next) {
   const people = req.body.data.people;
-  // if (people) {
-  //   if (validatePeople(people)) {
-  //     return next();
-  //   }
-  //   // next({
-  //   //   status: 400,
-  //   //   message: `${people} is not a valid entry for number of people`,
-  //   // });
-  // }
-  // return next({
-  //   status: 400,
-  //   message: "data must have people property",
-  // });
 
+  // if people data does NOT exist
   if (!people) {
     return next({
       status: 400,
@@ -197,10 +185,12 @@ function hasPeople(req, res, next) {
     });
   }
 
+  // if people data is NOT a number
   if (typeof people !== "number") {
     return next({ status: 400, message: "'people' field must be a number" });
   }
 
+  // if people data is NOT at least one
   if (people < 1) {
     return next({ status: 400, message: "'people' field must be at least 1" });
   }
@@ -265,19 +255,6 @@ function validateReservationTime(reservationTime, reservationDate) {
     fixedReserveDate <= closeTime &&
     fixedReserveDate >= now
   );
-}
-
-// validates that people is an acutal number
-function validatePeople(people) {
-  // return people && people > 0 && Number.isInteger(people);
-  if (typeof people !== "number") {
-    return next({ status: 400, message: "'people' field must be a number" });
-  }
-
-  if (people < 1) {
-    return next({ status: 400, message: "'people' field must be at least 1" });
-  }
-  return true;
 }
 
 //reformat numbers to only integers for checks
