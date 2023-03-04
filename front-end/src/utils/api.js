@@ -92,12 +92,15 @@ export async function createReservation(reservation, signal) {
 /**
  * Edits an existing reservation.
  */
-export async function editReservation(reservation_id, reservation, signal) {
-  const url = `${API_BASE_URL}/reservations/${reservation_id}`;
-
-  const body = JSON.stringify({ data: reservation });
-
-  return await fetchJson(url, { headers, signal, method: "PUT", body }, []);
+export async function editReservation(data, signal) {
+  const url = `${API_BASE_URL}/reservations/${data.reservation_id}/edit`;
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data }),
+    signal,
+  };
+  return await fetchJson(url, options);
 }
 
 export async function findReservation(reservation_id, signal) {

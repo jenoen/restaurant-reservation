@@ -85,7 +85,7 @@ function EditReservation() {
       return response;
     } catch (error) {
       setError(error);
-      console.error("hey", error);
+      console.error(error);
     }
   }
 
