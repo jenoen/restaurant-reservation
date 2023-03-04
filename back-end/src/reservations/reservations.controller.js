@@ -274,24 +274,52 @@ function toDate(dateStr) {
   // return new Date(year, month, day);
 }
 
-async function validateStatus(req, res, next) {
-  const reservation = await service.find(req.params.reservation_id);
-  if (req.body.data.status !== "unknown") {
-    if (
-      reservation[0].status === "booked" ||
-      reservation[0].status === "seated"
-    ) {
-      return next();
-    }
-    next({
+async function validateStatusBody(req, res, next) {
+  // const reservation = await service.find(req.params.reservation_id);
+  // if (req.body.data.status !== "unknown") {
+  //   if (
+  //     reservation[0].status === "booked" ||
+  //     reservation[0].status === "seated"
+  //   ) {
+  //     return next();
+  //   }
+  //   next({
+  //     status: 400,
+  //     message: `status ${reservation[0].status} cannot be updated`,
+  //   });
+  // }
+  // next({
+  //   status: 400,
+  //   message: `status cannot be ${req.body.data.status}`,
+  // });
+
+  // checks if the body has a status field
+  if (!req.body.data.status) {
+    return next({ status: 400, message: "body must include a status field" });
+  }
+
+  // WRONG STATUS if the body is NOT either one of booked, seated, finished, or cancelled
+  if (
+    req.body.data.status !== "booked" &&
+    req.body.data.status !== "seated" &&
+    req.body.data.status !== "finished" &&
+    req.body.data.status !== "cancelled"
+  ) {
+    return next({
       status: 400,
-      message: `status ${reservation[0].status} cannot be updated`,
+      message: `'status' field cannot be ${req.body.data.status}`,
     });
   }
-  next({
-    status: 400,
-    message: `status cannot be ${req.body.data.status}`,
-  });
+
+  // also if the reservation is already FINISHED .. cannot update
+  if (res.locals.reservation.status === "finished") {
+    return next({
+      status: 400,
+      message: `a finished reservation cannot be updated`,
+    });
+  }
+
+  next();
 }
 
 module.exports = {
@@ -322,7 +350,8 @@ module.exports = {
   ],
   update: [
     asyncErrorBoundary(validateReservationId),
-    asyncErrorBoundary(validateStatus),
+    asyncErrorBoundary(validateData),
+    asyncErrorBoundary(validateStatusBody),
     asyncErrorBoundary(updateStatus),
   ],
 };
