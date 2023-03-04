@@ -230,7 +230,6 @@ function Dashboard({ today }) {
       <ReservationRow
         key={reservation.reservation_id}
         reservation={reservation}
-        tables={tables}
         setError={setError}
       />
     ));

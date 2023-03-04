@@ -3,7 +3,7 @@ import { Link, useHistory } from "react-router-dom";
 import { updateReservationStatus } from "../utils/api";
 
 // pass in reservation as a prop!
-export default function ReservationRow({ reservation, tables, setError }) {
+export default function ReservationRow({ reservation, setError }) {
   const history = useHistory();
 
   // formats time nicely

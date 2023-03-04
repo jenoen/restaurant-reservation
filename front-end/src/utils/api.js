@@ -174,3 +174,10 @@ export async function updateReservationStatus(reservation, status, signal) {
   };
   return await fetchJson(url, options);
 }
+
+// searches mobile number / convert to string
+export async function searchPhoneNumber(phoneNumber, signal) {
+  const url = new URL(`${API_BASE_URL}/reservations`);
+  url.searchParams.append("mobile_number", phoneNumber.toString());
+  return await fetchJson(url, { headers, signal }, []);
+}
