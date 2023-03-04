@@ -176,19 +176,36 @@ function hasReservationTime(req, res, next) {
 
 function hasPeople(req, res, next) {
   const people = req.body.data.people;
-  if (people) {
-    if (validatePeople(people)) {
-      return next();
-    }
-    // next({
-    //   status: 400,
-    //   message: `${people} is not a valid entry for number of people`,
-    // });
+  // if (people) {
+  //   if (validatePeople(people)) {
+  //     return next();
+  //   }
+  //   // next({
+  //   //   status: 400,
+  //   //   message: `${people} is not a valid entry for number of people`,
+  //   // });
+  // }
+  // return next({
+  //   status: 400,
+  //   message: "data must have people property",
+  // });
+
+  if (!people) {
+    return next({
+      status: 400,
+      message: "data must have people property",
+    });
   }
-  return next({
-    status: 400,
-    message: "data must have people property",
-  });
+
+  if (typeof people !== "number") {
+    return next({ status: 400, message: "'people' field must be a number" });
+  }
+
+  if (people < 1) {
+    return next({ status: 400, message: "'people' field must be at least 1" });
+  }
+
+  next();
 }
 
 function hasValidStatus(req, res, next) {

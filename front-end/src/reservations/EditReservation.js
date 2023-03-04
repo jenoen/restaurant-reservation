@@ -34,32 +34,49 @@ function EditReservation() {
     };
   }, [reservation_id]);
 
-  function handleChange(e) {
-    let value = e.target.value;
-    if (e.target.name === "mobile_number") {
-      const formatted = formatPhoneNumber(value);
-      return setFormData({
+  // function handleChange(e) {
+  //   let value = e.target.value;
+  //   if (e.target.name === "mobile_number") {
+  //     const formatted = formatPhoneNumber(value);
+  //     return setFormData({
+  //       ...formData,
+  //       [e.target.name]: formatted,
+  //     });
+  //   } else if (e.target.name === "people") {
+  //     value = Number(value);
+  //     return setFormData({
+  //       ...formData,
+  //       [e.target.name]: value,
+  //     });
+  //   } else {
+  //     return setFormData({
+  //       ...formData,
+  //       [e.target.name]: value,
+  //     });
+  //   }
+  // }
+
+  const handleChange = ({ target }) => {
+    if (target.name === "mobile_number") {
+      const formatted = formatPhoneNumber(target.value);
+      setFormData({
         ...formData,
-        [e.target.name]: formatted,
-      });
-    } else if (e.target.name === "people") {
-      value = Number(value);
-      return setFormData({
-        ...formData,
-        [e.target.name]: value,
+        [target.name]: formatted,
       });
     } else {
-      return setFormData({
+      setFormData({
         ...formData,
-        [e.target.name]: value,
+        [target.name]: target.value,
       });
     }
-  }
+  };
 
   async function handleSubmit(e) {
     e.preventDefault();
     try {
       const abortController = new AbortController();
+      // formData.people = Number(formData.people);
+
       const response = await editReservation(
         { ...formData },
         abortController.signal
@@ -104,7 +121,7 @@ function EditReservation() {
                 id="first_name"
                 name="first_name"
                 className="form-control"
-                onChange={(e) => handleChange(e)}
+                onChange={handleChange}
                 type="text"
                 value={formData.first_name}
                 required
@@ -116,7 +133,7 @@ function EditReservation() {
                 id="last_name"
                 name="last_name"
                 className="form-control"
-                onChange={(e) => handleChange(e)}
+                onChange={handleChange}
                 type="text"
                 value={formData.last_name}
                 required
@@ -128,7 +145,7 @@ function EditReservation() {
                 id="mobile_number"
                 name="mobile_number"
                 className="form-control"
-                onChange={(e) => handleChange(e)}
+                onChange={handleChange}
                 type="text"
                 maxLength="14"
                 size="14"
@@ -142,7 +159,7 @@ function EditReservation() {
                 id="reservation_date"
                 name="reservation_date"
                 className="form-control"
-                onChange={(e) => handleChange(e)}
+                onChange={handleChange}
                 type="date"
                 value={formData.reservation_date}
                 required
@@ -154,7 +171,7 @@ function EditReservation() {
                 id="reservation_time"
                 name="reservation_time"
                 className="form-control"
-                onChange={(e) => handleChange(e)}
+                onChange={handleChange}
                 type="time"
                 value={formData.reservation_time}
                 step="300"
@@ -167,7 +184,7 @@ function EditReservation() {
                 id="people"
                 name="people"
                 className="form-control"
-                onChange={(e) => handleChange(e)}
+                onChange={handleChange}
                 type="number"
                 value={formData.people}
                 required
@@ -179,7 +196,7 @@ function EditReservation() {
             <button
               data-reservation-id-cancel={formData.reservation_id}
               className="btn btn-secondary"
-              onClick={(e) => handleCancel(e)}
+              onChange={handleChange}
             >
               Cancel
             </button>
