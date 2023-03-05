@@ -1,5 +1,5 @@
 const puppeteer = require("puppeteer");
-const { setDefaultOptions } = require('expect-puppeteer');
+const { setDefaultOptions } = require("expect-puppeteer");
 const fs = require("fs");
 const fsPromises = fs.promises;
 
@@ -85,7 +85,7 @@ describe("US-05 - Finish an occupied table - E2E", () => {
       await page.waitForResponse((response) => {
         return response.url().endsWith(`/tables`);
       });
-
+      console.log("----------------------------------------------------");
       await page.screenshot({
         path: ".screenshots/us-05-dashboard-finish-button-after.png",
         fullPage: true,

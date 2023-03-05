@@ -69,9 +69,14 @@ async function free(req, res, next) {
   );
   // THEN TABLE UPDATE : reset table's res id to null and table status is "free"
   const response = await service.free(tableId);
+  console.log("req.params.table_id", req.params.table_id);
+  console.log("response", response);
+
+  // console.log("response[0]", response[0]);
+  // console.log("data: response[0]", { data: response[0] });
 
   res.status(200).json({
-    data: response[0],
+    data: response,
   });
 }
 

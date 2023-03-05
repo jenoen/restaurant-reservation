@@ -147,9 +147,10 @@ export async function finishTable(table, signal) {
   const options = {
     method: "DELETE",
     headers,
-    body: JSON.stringify({ data: table }),
+    body: JSON.stringify({ data: { table_id: table.table_id } }),
     signal,
   };
+  // console.log("options api", options);
   return await fetchJson(url, options);
 }
 

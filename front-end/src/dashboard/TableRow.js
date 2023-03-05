@@ -43,9 +43,10 @@ export default function TableRow({ table, setError }) {
           `Is this table ready to seat new guests? This cannot be undone.`
         )
       ) {
-        const response = await finishTable(table, abortController.signal);
-        history.go(0);
-        return response;
+        await finishTable(table, abortController.signal);
+        // console.error("hey tableRow.js", response);
+        history.push(`/`);
+        // return response;
       }
     } catch (error) {
       setError(error);
@@ -90,6 +91,7 @@ export default function TableRow({ table, setError }) {
         data-table-id-status={table.table_id}
       >
         {tableStatus(table.reservation_id)}
+        {/* {table.status} */}
       </td>
       <td>{showFinishButton(table, table.reservation_id)}</td>
     </tr>
