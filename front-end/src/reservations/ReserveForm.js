@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import ErrorAlert from "../layout/ErrorAlert";
+import ErrorAlertMsg from "../layout/ErrorAlertMsg";
 
 import {
   editReservation,
@@ -205,47 +205,21 @@ export default function ReserveForm({ create = false }) {
     return true;
   }
 
-  // // function to display multiple errors we have received - to be inserted with "form component"
-  // const displayErrors = () => {
-  //   let errorMessages = [];
-  //   let errorMessageStr = "";
-  //   console.log("Start: error", error);
-
-  //   for (let object in error) {
-  //     console.log("error.object", error[object]);
-  //     errorMessages.push(error[object]);
-  //     errorMessageStr += error[object];
-  //   }
-  //   console.log("Final: errorMessageStr: " + errorMessageStr);
-
-  //   // console.log("errorMessages", errorMessages);
-  //   <ErrorAlert2 error={errorMessageStr} />;
-  //   // if ((errorMessages = ![])) {
-  //   //   return <ErrorAlert error={errorMessages} />;
-  //   // }
-  //   // if (errorMessageStr != "") {
-  //   //   return <ErrorAlert></ErrorAlert>
-  //   // }
-
-  //   // return errorMessages.map((eachError, idx) => (
-  //   //   eachError.message
-  //   //   <ErrorAlert key={idx} error={eachError} />
-  //   // ));
-  // };
-
   const displayErrors = () => {
-    let errorMessages = [];
+    let errorMessages = "";
     console.log("error", error);
 
     for (let object in error) {
       console.log("error.object", error[object]);
-      errorMessages.push(error[object]);
+      errorMessages = errorMessages + error[object].message + ", ";
     }
 
     console.log("errorMessages", errorMessages);
-    return errorMessages.map((eachError, idx) => (
-      <ErrorAlert key={idx} error={eachError} />
-    ));
+    if (errorMessages !== "") {
+      console.log("before send: " + errorMessages);
+      return <ErrorAlertMsg errorMsg={errorMessages} />;
+    }
+    return null;
   };
 
   return (
