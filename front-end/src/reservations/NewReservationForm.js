@@ -21,46 +21,6 @@ export default function NewReservation() {
   // another state to hold errors
   const [error, setError] = useState(null);
 
-  /**
-   * Make an API call to get all reservations if we are editing, filling in the form.
-   */
-  // to load the "reservation to edit"
-  // if EDIT form is passed in as true
-  // useEffect(() => {
-  //   if (edit) {
-  //     // if either of these don't exist, we cannot continue.
-  //     if (!reservations || !reservation_id) return null;
-
-  //     // let's try to find the corresponding reservation:
-  //     const foundReservation = reservations.find(
-  //       (reservation) => reservation.reservation_id === Number(reservation_id)
-  //     );
-
-  //     // if it doesn't exist, or the reservation isnt booked, we cannot edit.
-  //     if (!foundReservation || foundReservation.status !== "booked") {
-  //       return <p>Only booked reservations can be edited.</p>;
-  //     }
-
-  //     const date = new Date(foundReservation.reservation_date);
-  //     const dateString = `${date.getFullYear()}-${(
-  //       "0" +
-  //       (date.getMonth() + 1)
-  //     ).slice(-2)}-${("0" + date.getDate()).slice(-2)}`;
-
-  //     // if foundReservation, set the form fields with the pre-existing data
-  //     setFormData({
-  //       first_name: foundReservation.first_name,
-  //       last_name: foundReservation.last_name,
-  //       mobile_number: foundReservation.mobile_number,
-  //       // reservation_date: foundReservation.reservation_date,
-  //       reservation_date: dateString,
-  //       reservation_time: foundReservation.reservation_time,
-  //       people: foundReservation.people,
-  //       reservation_id: foundReservation.reservation_id,
-  //     });
-  //   }
-  // }, [edit, reservation_id]);
-
   // setting the form/card data (this records your keystroke but it doesn't save until SUBMIT)
   // aka everytime a user makes a change to an input, we want to record that as a state.
   const handleChange = ({ target }) => {

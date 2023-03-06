@@ -34,28 +34,6 @@ function EditReservation() {
     };
   }, [reservation_id]);
 
-  // function handleChange(e) {
-  //   let value = e.target.value;
-  //   if (e.target.name === "mobile_number") {
-  //     const formatted = formatPhoneNumber(value);
-  //     return setFormData({
-  //       ...formData,
-  //       [e.target.name]: formatted,
-  //     });
-  //   } else if (e.target.name === "people") {
-  //     value = Number(value);
-  //     return setFormData({
-  //       ...formData,
-  //       [e.target.name]: value,
-  //     });
-  //   } else {
-  //     return setFormData({
-  //       ...formData,
-  //       [e.target.name]: value,
-  //     });
-  //   }
-  // }
-
   const handleChange = ({ target }) => {
     if (target.name === "mobile_number") {
       const formatted = formatPhoneNumber(target.value);
