@@ -80,6 +80,8 @@ describe("US-05 - Finish an occupied table - E2E", () => {
         await dialog.accept();
       });
 
+      console.log("table status: " + table.status);
+      console.log("Here's table id passed initially: " + table.table_id);
       await page.click(finishButtonSelector);
 
       await page.waitForResponse((response) => {

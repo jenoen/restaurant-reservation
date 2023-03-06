@@ -9,8 +9,14 @@ async function list(req, res) {
 // creates a table
 async function create(req, res, next) {
   // adds status that it's a "free" table
-  req.body.data.status = "free";
   const data = req.body.data;
+
+  if (data.reservation_id != null) {
+    data.status = "occupied";
+  } else {
+    // adds status that it's a "free" table
+    data.status = "free";
+  }
 
   // creates the table
   const response = await service.create(data);
@@ -216,7 +222,10 @@ async function validateSeat(req, res, next) {
  * Makes sure table is occupied before finishing a table.
  */
 async function validateReadyToFinish(req, res, next) {
-  if (res.locals.table.status !== "occupied") {
+  let stat = res.locals.table.status;
+  console.log("tables.controller - Here's the status: " + stat);
+  console.log("Here's table id passed in: " + res.locals.table.table_id);
+  if (stat !== "occupied") {
     return next({ status: 400, message: "this table is not occupied" });
   }
 

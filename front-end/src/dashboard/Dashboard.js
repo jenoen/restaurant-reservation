@@ -40,6 +40,7 @@ function Dashboard({ today }) {
         setReservations(response);
       } catch (error) {
         setError(error);
+        console.error(error);
       }
       // lists the tables
       try {

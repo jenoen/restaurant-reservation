@@ -1,6 +1,6 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { finishTable } from "../utils/api";
+import { finishTable, listReservations, listTables } from "../utils/api";
 
 export default function TableRow({ table, setError }) {
   const history = useHistory();
@@ -43,10 +43,20 @@ export default function TableRow({ table, setError }) {
           `Is this table ready to seat new guests? This cannot be undone.`
         )
       ) {
-        await finishTable(table, abortController.signal);
-        // console.error("hey tableRow.js", response);
+        const response = await finishTable(table, abortController.signal);
+        console.log("hey tableRow.js", response);
+
+        // const reservationResponse = await listReservations(
+        //   new Date(),
+        //   abortController.signal
+        // );
+        // console.log("resResponse tableRow.js");
+
+        // const tableResponse = await listTables(abortController.signal);
+        // console.log("tableResponse tableRow.js");
+
         history.push(`/`);
-        // return response;
+        return response;
       }
     } catch (error) {
       setError(error);

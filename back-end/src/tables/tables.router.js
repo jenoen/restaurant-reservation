@@ -15,6 +15,13 @@ router
   .delete(controller.free)
   .all(methodNotAllowed);
 
+// router
+//   .route("/:table_id")
+//   // .get(controller.list)
+//   // .put(controller.update)
+//   .delete(controller.free)
+//   .all(methodNotAllowed);
+
 router.route("/new").post(controller.create).all(methodNotAllowed);
 router
   .route("/")
