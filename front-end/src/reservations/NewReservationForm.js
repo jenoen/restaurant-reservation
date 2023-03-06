@@ -106,7 +106,7 @@ export default function NewReservation() {
           { ...formData },
           abortController.signal
         );
-        
+
         history.push(`/dashboard?date=${formData.reservation_date}`);
         return response;
       }
