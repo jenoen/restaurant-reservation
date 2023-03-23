@@ -1,5 +1,8 @@
 # Capstone: Restaurant Reservation System
 
+Link to final deployment:
+https://restaurant-reservation-4b21-kc5fdgbcf-jenoen.vercel.app/dashboard
+
 > You have been hired as a full stack developer at _Periodic Tables_, a startup that is creating a reservation system for fine dining restaurants.
 > The software is used only by restaurant personnel when a customer calls to request a reservation.
 > At this point, the customers will not access the system online.
