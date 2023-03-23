@@ -41,44 +41,46 @@ export default function NewTable() {
   }
 
   return (
-    <div className="container">
-      <form className="d-grid gap-2 mb-2">
-        <h1>New Table</h1>
-        <ErrorAlert error={error} />
-        <div className="form-group">
-          <label htmlFor="table_name">Table Name:&nbsp;</label>
-          <input
-            name="table_name"
-            id="table_name"
-            type="text"
-            min="2"
-            placeholder="eg. Table 3"
-            onChange={handleChange}
-            value={formData.table_name}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="capacity">Capacity:&nbsp;</label>
-          <input
-            className="form-control"
-            name="capacity"
-            id="capacity"
-            type="number"
-            min="1"
-            onChange={handleChange}
-            value={formData.capacity}
-            placeholder="eg. 1"
-            required
-          />
-        </div>
-        <button type="submit" onClick={handleSubmit}>
-          Submit
-        </button>
-        <button type="button" onClick={history.goBack}>
-          Cancel
-        </button>
-      </form>
+    <div>
+      <h1>New Table</h1>
+      <div className="container">
+        <form className="d-grid gap-2 mb-2">
+          <ErrorAlert error={error} />
+          <div className="form-group">
+            <label htmlFor="table_name">Table Name:&nbsp;</label>
+            <input
+              name="table_name"
+              id="table_name"
+              type="text"
+              min="2"
+              placeholder="eg. Table 3"
+              onChange={handleChange}
+              value={formData.table_name}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="capacity">Capacity:&nbsp;</label>
+            <input
+              className="form-control"
+              name="capacity"
+              id="capacity"
+              type="number"
+              min="1"
+              onChange={handleChange}
+              value={formData.capacity}
+              placeholder="eg. 1"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-gold" onClick={handleSubmit}>
+            Submit
+          </button>
+          <button type="button" class="btn btn-gold" onClick={history.goBack}>
+            Cancel
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

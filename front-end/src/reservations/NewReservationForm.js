@@ -9,6 +9,9 @@ import ReserveForm from "./ReserveForm.js";
 export default function NewReservation() {
   return (
     // form component
-    <ReserveForm create={true} />
+    <div>
+      <h1>New Reservation</h1>
+      <ReserveForm create={true} />
+    </div>
   );
 }

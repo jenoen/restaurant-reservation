@@ -89,143 +89,6 @@ function Dashboard({ today }) {
     setSelectedDate(currentDateString);
   }
 
-  // // displays time in a nicer format
-  // function simpleTimeFormat(time) {
-  //   let hour = +time.substr(0, 2);
-  //   let newHour = hour % 12 || 12;
-  //   let meridiem = hour < 12 || hour === 24 ? "AM" : "PM";
-  //   return `${newHour}${time.substr(2, 3)} ${meridiem}`;
-  // }
-
-  // // displays table status depending if there is a reservation ID
-  // function tableStatus(reservation_id) {
-  //   return reservation_id ? "Occupied" : "Free";
-  // }
-
-  // // function to finish table/clear the reservation ID associated
-  // async function finish(table) {
-  //   const abortController = new AbortController();
-  //   try {
-  //     if (
-  //       window.confirm(
-  //         `Is this table ready to seat new guests? This cannot be undone.`
-  //       )
-  //     ) {
-  //       const response = await finishTable(table, abortController.signal);
-  //       history.go(0); // reloads the current page
-  //       return response;
-  //     }
-  //   } catch (error) {
-  //     setError(error);
-  //     console.error(error);
-  //   }
-  // }
-
-  // function showFinishButton(table, reservationId) {
-  //   if (reservationId) {
-  //     return (
-  //       <button
-  //         className="btn btn-light btn-sm"
-  //         data-table-id-finish={table.table_id}
-  //         onClick={() => finish(table)}
-  //       >
-  //         Finish
-  //       </button>
-  //     );
-  //   }
-  //   return (
-  //     <button
-  //       className="btn btn-light btn-sm"
-  //       data-table-id-finish={table.table_id}
-  //       disabled
-  //     >
-  //       Empty
-  //     </button>
-  //   );
-  // }
-
-  // // shows the status of the reservation and allows to seat the reservation
-  // function reservationStatus(reservation) {
-  //   if (reservation.status === "booked") {
-  //     return (
-  //       <Link
-  //         to={{
-  //           pathname: `/reservations/${reservation.reservation_id}/seat`,
-  //           state: {
-  //             tables: tables,
-  //           },
-  //         }}
-  //         type="button"
-  //         className="btn btn-light btn-sm"
-  //       >
-  //         Seat
-  //       </Link>
-  //     );
-  //   }
-  //   return null;
-  // }
-
-  // // button to edit the reservation
-  // function editReservation(reservation) {
-  //   if (reservation.status === "booked") {
-  //     return (
-  //       <Link
-  //         to={{
-  //           pathname: `/reservations/${reservation.reservation_id}/edit`,
-  //           state: {
-  //             date: reservation.reservation_date,
-  //           },
-  //         }}
-  //         type="button"
-  //         className="btn btn-light btn-sm"
-  //       >
-  //         Edit
-  //       </Link>
-  //     );
-  //   }
-  //   return null;
-  // }
-
-  // // button to cancel/delete the reservation
-  // function cancelButton(reservation) {
-  //   if (reservation.status === "booked") {
-  //     return (
-  //       <td data-reservation-id-cancel={reservation.reservation_id}>
-  //         <button
-  //           className="btn btn-danger btn-sm"
-  //           onClick={() => cancelReservation(reservation)}
-  //         >
-  //           Cancel
-  //         </button>
-  //       </td>
-  //     );
-  //   }
-  //   return <td></td>;
-  // }
-
-  // // function that would actually delete the reservation
-  // async function cancelReservation(reservation) {
-  //   try {
-  //     if (
-  //       window.confirm(
-  //         `Do you want to cancel this reservation? This cannot be undone.`
-  //       )
-  //     ) {
-  //       const abortController = new AbortController();
-  //       const response = await updateReservationStatus(
-  //         reservation,
-  //         "cancelled",
-  //         abortController.signal
-  //       );
-  //       history.go(0);
-  //       return response;
-  //     }
-  //   } catch (error) {
-  //     setError(error);
-  //     console.error(error);
-  //   }
-  // }
-
   const displayReservationRows = () => {
     return reservations.map((reservation) => (
       <ReservationRow
@@ -269,19 +132,23 @@ function Dashboard({ today }) {
           <div className="btn-group">
             <button
               type="button"
-              className="btn "
+              className="btn btn-outline-dark"
               onClick={() => handlePrevious()}
             >
               Previous
             </button>
             <button
               type="button"
-              className="btn "
+              className="btn btn-outline-dark"
               onClick={() => handleCurrent()}
             >
               Today
             </button>
-            <button type="button" className="btn " onClick={() => handleNext()}>
+            <button
+              type="button"
+              className="btn btn-outline-dark"
+              onClick={() => handleNext()}
+            >
               Next
             </button>
           </div>

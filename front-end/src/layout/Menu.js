@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 
 function Menu() {
   return (
-    <nav className="navbar navbar-dark align-items-start p-0">
+    <nav className="navbar navbar-expand-md navbar-dark align-items-start  text-light">
       <div className="container-fluid d-flex flex-column p-0">
         <Link
           className="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0"
@@ -47,13 +47,13 @@ function Menu() {
             </Link>
           </li>
         </ul>
-        <div className="text-center d-none d-md-inline">
+        {/* <div className="text-center d-none d-md-inline">
           <button
             className="btn rounded-circle border-0"
             id="sidebarToggle"
             type="button"
           />
-        </div>
+        </div> */}
       </div>
     </nav>
   );

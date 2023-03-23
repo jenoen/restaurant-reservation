@@ -1,4 +1,48 @@
 .side-bar {
-  background-color: #393a44;
+  background-color: #000000dd;
   min-width: 200px;
+}
+
+h1,
+h4,
+p,
+th,
+label,
+input,
+td,
+a,
+button {
+  font-family: Montserrat;
+  margin: 5px;
+}
+
+.btn {
+  background-color: #ffffff;
+  color: #000000dd;
+}
+
+.btn-group {
+  position: relative;
+  display: flex;
+  vertical-align: middle;
+}
+
+.btn-gold {
+  background-color: #bd9e24;
+  color: #ffffffdd;
+  border: 50%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-box {
+  padding: 25px;
+}
+
+.sidebar-brand-text {
+  color: #bd9e24;
+  font-weight: 900;
 }

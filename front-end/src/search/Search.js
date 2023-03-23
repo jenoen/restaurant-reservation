@@ -107,7 +107,7 @@ export default function Search() {
           required
         />
 
-        <button type="submit" onClick={handleSubmit}>
+        <button type="submit" class="btn btn-gold" onClick={handleSubmit}>
           Find
         </button>
       </form>

@@ -223,87 +223,89 @@ export default function ReserveForm({ create = false }) {
   };
 
   return (
-    <form>
-      {displayErrors()}
+    <div class="form-box">
+      <form class="form-group">
+        {displayErrors()}
 
-      {/* First Name */}
-      <label htmlFor="first_name">First Name: &nbsp;</label>
-      <input
-        name="first_name"
-        id="first_name"
-        type="text"
-        onChange={handleChange} // we will add this in soon!
-        value={formData.first_name} // this as well!
-        required // this will make the field non-nullable
-      />
+        {/* First Name */}
+        <label htmlFor="first_name">First Name: &nbsp;</label>
+        <input
+          name="first_name"
+          id="first_name"
+          type="text"
+          onChange={handleChange} // we will add this in soon!
+          value={formData.first_name} // this as well!
+          required // this will make the field non-nullable
+        />
 
-      {/* Last Name */}
-      <label htmlFor="last_name">Last Name: &nbsp;</label>
-      <input
-        name="last_name"
-        id="last_name"
-        type="text"
-        onChange={handleChange} // we will add this in soon!
-        value={formData.last_name} // this as well!
-        required // this will make the field non-nullable
-      />
+        {/* Last Name */}
+        <label htmlFor="last_name">Last Name: &nbsp;</label>
+        <input
+          name="last_name"
+          id="last_name"
+          type="text"
+          onChange={handleChange} // we will add this in soon!
+          value={formData.last_name} // this as well!
+          required // this will make the field non-nullable
+        />
 
-      {/* Mobile Number */}
-      <label htmlFor="mobile_number">Phone Number:&nbsp;</label>
-      <input
-        name="mobile_number"
-        id="mobile_number"
-        type="text"
-        onChange={handleChange} // we will add this in soon!
-        value={formData.mobile_number} // this as well!
-        required // this will make the field non-nullable
-      />
+        {/* Mobile Number */}
+        <label htmlFor="mobile_number">Phone Number:&nbsp;</label>
+        <input
+          name="mobile_number"
+          id="mobile_number"
+          type="text"
+          onChange={handleChange} // we will add this in soon!
+          value={formData.mobile_number} // this as well!
+          required // this will make the field non-nullable
+        />
 
-      {/* Date of reservation */}
-      <label htmlFor="reservation_date">Reservation Date:&nbsp;</label>
-      <input
-        name="reservation_date"
-        id="reservation_date"
-        type="date"
-        onChange={handleChange} // we will add this in soon!
-        value={formData.reservation_date} // this as well!
-        required // this will make the field non-nullable
-      />
+        {/* Date of reservation */}
+        <label htmlFor="reservation_date">Reservation Date:&nbsp;</label>
+        <input
+          name="reservation_date"
+          id="reservation_date"
+          type="date"
+          onChange={handleChange} // we will add this in soon!
+          value={formData.reservation_date} // this as well!
+          required // this will make the field non-nullable
+        />
 
-      {/* Time of reservation */}
-      <label htmlFor="reservation_time">Reservation Time:&nbsp;</label>
-      <input
-        name="reservation_time"
-        id="reservation_time"
-        type="time"
-        onChange={handleChange} // we will add this in soon!
-        value={formData.reservation_time} // this as well!
-        required // this will make the field non-nullable
-      />
+        {/* Time of reservation */}
+        <label htmlFor="reservation_time">Reservation Time:&nbsp;</label>
+        <input
+          name="reservation_time"
+          id="reservation_time"
+          type="time"
+          onChange={handleChange} // we will add this in soon!
+          value={formData.reservation_time} // this as well!
+          required // this will make the field non-nullable
+        />
 
-      {/* Number of ppl in party */}
-      <label htmlFor="people">Party Size:&nbsp;</label>
-      <input
-        name="people"
-        id="people"
-        type="number"
-        onChange={handleChange} // we will add this in soon!
-        value={formData.people} // this as well!
-        required // this will make the field non-nullable
-      />
+        {/* Number of ppl in party */}
+        <label htmlFor="people">Party Size:&nbsp;</label>
+        <input
+          name="people"
+          id="people"
+          type="number"
+          onChange={handleChange} // we will add this in soon!
+          value={formData.people} // this as well!
+          required // this will make the field non-nullable
+        />
 
-      {/* button for submit*/}
-      <button type="submit" onClick={handleSubmit}>
-        Submit
-      </button>
-      {/* button for cancel*/}
-      <button
-        type="button"
-        // onClick={history.goBack}
-        onClick={() => history.goBack()}
-      >
-        Cancel
-      </button>
-    </form>
+        {/* button for submit*/}
+        <button type="submit" class="btn btn-gold" onClick={handleSubmit}>
+          Submit
+        </button>
+        {/* button for cancel*/}
+        <button
+          type="button"
+          class="btn btn-gold"
+          onClick={() => history.goBack()}
+        >
+          Cancel
+        </button>
+      </form>
+    </div>
   );
 }
